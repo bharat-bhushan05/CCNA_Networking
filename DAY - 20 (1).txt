@@ -1,0 +1,262 @@
+- What is NAT (Network Address Translation) in Networking?
+  - NAT is a method used by routers to translate private IP addresses into public IP addresses, and vice versa. It acts like a bridge between a local (private) network and the Internet (public network).
+  
+- Why is NAT Required?
+  1. IPv4 Address Shortage
+    - IPv4 has a limited number of public IP addresses.
+    - NAT allows multiple private IP devices to share one public IP to connect to the Internet.
+
+  2. Security
+    - Devices in the internal network are not directly exposed to the Internet.
+    - Provides basic firewall-like functionality by hiding internal IPs.
+
+  3. Private IP Usage
+    - Allows the use of private IP ranges (like 192.168.x.x, 10.x.x.x) in LANs.
+    - These IPs are not routable on the public Internet—NAT helps in translating them.
+	
+- How NAT Works:
+  - When a device (e.g., PC) on a private network wants to access the Internet:
+    1. The router replaces the private source IP with the router’s public IP.
+    2. It also remembers which internal IP made the request.
+    3. When a reply comes, the router forwards it to the correct internal IP.
+
+- Example:
+  Device	      Private IP	          Public IP after NAT
+  PC	          192.168.1.10	          203.0.113.5
+
+  - When PC goes to google.com:
+  - Request goes out as 203.0.113.5 (router's IP).
+  - Google replies to 203.0.113.5.
+  - Router forwards reply to 192.168.1.10.
+  
+  
+- Types of NAT:
+  Type	                             Description
+  Static NAT	                     One-to-one mapping between private and public IP.
+  Dynamic NAT	                     Uses a pool of public IPs for translation.
+  PAT (Port Address Translation)	 Also called NAT Overload – many private IPs share a single public IP using ports.
+  - PAT is the most commonly used NAT today.
+
+- Common Private IP Ranges:
+  10.0.0.0 – 10.255.255.255
+  172.16.0.0 – 172.31.255.255
+  192.168.0.0 – 192.168.255.255
+  - These are non-routable on the public Internet and need NAT for Internet access.
+
+- Summary:
+  Feature	          NAT
+  Main Purpose	      Translate private IP to public IP
+  Solves	          IPv4 address exhaustion
+  Adds Security?	  Yes, hides internal IPs from outside world
+  Common Type Used	  PAT (NAT Overload)
+  
+- What is Static NAT?
+  - Static NAT (Network Address Translation) is a one-to-one mapping between a private IP address and a public IP address.
+
+- Purpose:
+  - Allows a device inside a private network (like a web server) to be accessible from the outside (Internet) using a consistent public IP address.
+  - Used when internal resources must be reachable from the Internet (e.g., web servers, mail servers, FTP servers).
+ 
+- How Static NAT Works
+  - When an internal (private) device sends traffic to the Internet or receives it:
+    - The router always translates the internal IP to the same public IP and vice versa.
+
+  - Example:
+    Private IP	        Public IP
+    192.168.1.10	    203.0.113.10
+  - If an external client accesses 203.0.113.10, NAT translates it to 192.168.1.10 and forwards the traffic.
+  
+- Static NAT Use Cases
+  Use Case	                    Description
+  Hosting a Web Server	        Make internal web server accessible publicly.
+  Hosting Mail or FTP Server	External users can send emails or download files.
+  IP Cameras, VPN Gateways	    Provide public access to internal fixed IP devices.
+  
+- Cisco Static NAT Configuration Steps
+  - Topology Assumption:
+    - Internal private IP: 192.168.1.10
+    - Public IP (assigned to you): 203.0.113.10
+    - Inside interface: GigabitEthernet0/0
+    - Outside interface: GigabitEthernet0/1
+	
+- Step-by-step Configuration:
+
+Router> enable
+Router# configure terminal
+
+- Step 1: Define inside and outside interfaces
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+Router(config-if)# ip nat inside
+Router(config-if)# exit
+
+Router(config)# interface GigabitEthernet0/1
+Router(config-if)# ip address 203.0.113.1 255.255.255.0
+Router(config-if)# ip nat outside
+Router(config-if)# exit
+
+- Step 2: Configure Static NAT mapping
+Router(config)# ip nat inside source static 192.168.1.10 203.0.113.10
+
+- Done!
+Router(config)# end
+Router# write memory
+
+- Verification Commands
+  Command	                   Purpose
+  show ip nat translations	   Displays NAT mappings.
+  show ip nat statistics	   Shows NAT operation counters.
+  
+- Notes:
+  - Static NAT is manual — each mapping must be defined.
+  - Static NAT requires one public IP per private IP.
+  - Use Dynamic NAT or PAT if public IPs are limited.
+  
+- Summary:
+  Feature	         Static NAT
+  IP Mapping	     One-to-One
+  Use Case	         External access to internal devices
+  Public IP Usage	 High (needs one per private IP)
+  Configuration	     Manual
+  Example	         Web Server with fixed public IP
+  
+  
+--------------
+
+- What is Dynamic NAT?
+  - Dynamic NAT (Network Address Translation) allows many private IPs to be translated into a pool of public IP addresses, but only when needed. Unlike static NAT, mappings are not fixed; they are assigned dynamically from a pool.
+
+- Why Do We Use Dynamic NAT?
+  - When you have fewer public IP addresses than private devices.
+  - You want to control who can access the Internet, but don’t need permanent mappings.
+  - It’s more scalable than Static NAT in networks with many users.
+  
+- How Dynamic NAT Works
+  1. You configure a pool of public IPs.
+  2. When a private device accesses the Internet, the router temporarily assigns it an available public IP.
+  3. Once the session ends, the public IP is returned to the pool.
+  4. If no public IP is available, the session is dropped.
+  
+- Use Case of Dynamic NAT
+  Use Case	                  Description
+  Medium-size enterprise	  Limited public IPs shared among multiple users.
+  Schools or training labs	  When full-time external access is not required.
+  
+- Cisco Dynamic NAT Configuration
+  - Topology Assumption:
+    - Private LAN: 192.168.1.0/24
+    - Public IP pool: 203.0.113.10 to 203.0.113.20
+    - Inside Interface: GigabitEthernet0/0
+    - Outside Interface: GigabitEthernet0/1
+	
+- Step-by-Step Configuration:
+
+Router> enable
+Router# configure terminal
+
+- Step 1: Define Inside and Outside Interfaces
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+Router(config-if)# ip nat inside
+Router(config-if)# exit
+
+Router(config)# interface GigabitEthernet0/1
+Router(config-if)# ip address 203.0.113.1 255.255.255.0
+Router(config-if)# ip nat outside
+Router(config-if)# exit
+
+- Step 2: Create a NAT pool of public IP addresses
+Router(config)# ip nat pool PUBLIC_POOL 203.0.113.10 203.0.113.20 netmask 255.255.255.0
+
+- Step 3: Define which internal IPs are allowed to use NAT
+Router(config)# access-list 10 permit 192.168.1.0 0.0.0.255
+
+- Step 4: Link the access-list with the NAT pool
+Router(config)# ip nat inside source list 10 pool PUBLIC_POOL
+
+Router(config)# end
+Router# write memory
+
+- Verification Commands
+  Command	                  Purpose
+  show ip nat translations	  See current NAT mappings
+  show ip nat statistics	  Check pool usage and NAT counters
+
+
+----------------
+
+- What is PAT (Port Address Translation)?
+  - PAT is also known as NAT Overload.
+  - PAT maps multiple private IP addresses to a single public IP address using different port numbers.
+  
+- Why Do We Use PAT?
+  - Conserves public IP addresses.
+  - Ideal when you have hundreds of internal users but only 1 public IP.
+  - Ensures Internet connectivity for many users simultaneously.
+  
+- How PAT Works:
+  - Internal (private) IPs initiate connections to the Internet.
+  - The router translates their source IP and port to the public IP and a unique TCP/UDP port number.
+  - It maintains a translation table to match return traffic.
+  
+- Example:
+  Private IP	  Source Port	          Translated Public IP	   Translated Port
+  192.168.1.10	  12345	                  203.0.113.1	           50001
+  192.168.1.11	  12346	                  203.0.113.1	           50002
+  - Same public IP, different ports = efficient!
+
+- PAT Use Case:
+  Scenario	                           Why PAT?
+  Small office/home office (SOHO)	   One internet connection, many users
+  Enterprises with few public IPs	   Allows thousands of users on a single public IP
+  Home networks	                       PAT is used by default in home Wi-Fi routers
+  
+- Cisco PAT Configuration Example
+
+  - Network Assumptions:
+    Inside LAN: 192.168.1.0/24
+    Router inside interface: 192.168.1.1 (Gi0/0)
+    Router outside interface: 203.0.113.1 (Gi0/1)
+    Public IP used for NAT: 203.0.113.1
+	
+- Step-by-Step Configuration
+
+Router> enable
+Router# configure terminal
+
+- Step 1: Configure interfaces
+Router(config)# interface GigabitEthernet0/0
+Router(config-if)# ip address 192.168.1.1 255.255.255.0
+Router(config-if)# ip nat inside
+Router(config-if)# exit
+
+Router(config)# interface GigabitEthernet0/1
+Router(config-if)# ip address 203.0.113.1 255.255.255.0
+Router(config-if)# ip nat outside
+Router(config-if)# exit
+
+- Step 2: Create an access list for inside IPs
+Router(config)# access-list 10 permit 192.168.1.0 0.0.0.255
+
+- Step 3: Configure PAT using interface IP
+Router(config)# ip nat inside source list 10 interface GigabitEthernet0/1 overload
+
+Router(config)# end
+Router# write memory
+
+- PAT Verification Commands
+  Command	                  Description
+  show ip nat translations	  See current NAT/PAT entries
+  show ip nat statistics	  Show NAT hit rates and translations
+  
+-  Comparison with Dynamic & Static NAT:
+   Feature	            Static NAT	      Dynamic NAT	          PAT (NAT Overload)
+   Mapping Type	        1:1 (fixed)	      Many:many (pool)	      Many:1 (port-based)
+   Public IPs Needed	1 per host	      Pool of IPs	          1 IP can serve many users
+   Port Translation	    No	              No	                  Yes
+   Efficiency	        Low	              Medium	              High
+   
+- NAT Security Note
+  - PAT hides internal structure, improving security.
+  - However, does not provide encryption like a VPN.
+  

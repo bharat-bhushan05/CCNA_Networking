@@ -1,0 +1,99 @@
+Question :- What is IP (Internet Protocol) Address.
+Ans :- An IP Address (Internet Protocol Address) is a logical and unique numerical identifier assigned to every device connected to a network. It allows devices to send and receive data over the internet or a local network.	It's layer 3 technology, we can change IP Address to the device.
+
+- Why Do We Use IP Addresses in a Network?
+  1. Unique Identification of Devices
+    - Every device needs a unique address to communicate.
+    - Example: Your phone and laptop have different IP addresses when connected to Wi-Fi.
+
+  2. Enables Data Transmission
+    - An IP address helps route data from source to destination across networks.
+    - Example: When you open google.com, your request is sent to Google’s IP address.
+
+  3. Allows Internet Access
+    - Every website has an IP address, and DNS translates domain names into IPs.
+    - Example: google.com → 142.250.190.78 (IP address of Google’s server).
+
+  4. Supports Network Security & Control
+    - IP addresses help in firewall rules, tracking devices, and network security policies.
+    - Example: A company may block specific IP addresses for security reasons.
+
+- There is 2 types of the IP (Internet Protocol) Address :-
+  (i)  IPv4 (Internet Protocol version 4)
+  (ii) IPv6 (Internet Protocol version 6)
+  
+Example:
+
+ - IPv4 Address: 192.168.1.1
+ - IPv6 Address: 2001:db8::ff00:42:8329
+ 
+- Difference between Ipv4 and IPv6 
+     IPv4                                                          IPv6
+  - IPv4 is 32 bit IP Address.                            - IPv6 is 128 bit IP Address.
+  - It's numberic addressing method.                      - IPv6 is an alphanumeric addressing method.
+  - It's divided into 4 part and each part                - It's divided into 8 part and each part content 16 bit
+    content 8 bit address that is all so known              address that is all so known as block(Each block range from 0000 to ffff)
+    as Octet(Each octet ranges from 0 to 255).	
+  - IPv4 binary bits are seperated by a dot (.)           - IPv6 binary bits are separated by a colon (:)
+  - It's support decimal number system                    - it's support Hexa-decimal number system
+  - It's support Unicast, Multicast, Broadcast            - It's support Unicast, Multicast and Anycast
+  - IPv4 support VLSM(Virtual lenght subnet mask)         - IPv6 doesn't support VLSM
+
+- What is Anycast?
+Ans :- Anycast is a network addressing and routing method where multiple devices share the same IP address, but the closest one (in terms of network distance) responds to the request.
+
+- Key Concept:
+   - The same IPv6 address is assigned to multiple servers or devices.
+   - The router directs traffic to the nearest available server based on routing metrics.
+   - Used for load balancing, redundancy, and faster content delivery.
+   
+- Why Use Anycast in IPv6?
+  1. Faster Data Delivery
+     - Requests are sent to the nearest server, reducing latency.
+     - Example: When you visit Google, your request goes to the closest Google DNS server.
+
+  2. Load Balancing & Traffic Distribution
+    - Prevents overload by distributing traffic across multiple servers.
+    - Example: Cloud services (e.g., CDN providers like Cloudflare) use Anycast to balance traffic.
+
+  3. Improved Redundancy & Failover
+    - If one server goes down, traffic is automatically redirected to another nearby server.
+    - Example: Global DNS resolvers like 8.8.8.8 (Google) or 1.1.1.1 (Cloudflare).
+
+  4. DDoS Mitigation
+    - Attack traffic is spread across multiple servers, reducing impact.
+    - Example: Many security providers use Anycast to absorb DDoS attacks.
+	
+- How Anycast Works in IPv6?
+  - Step-by-Step Process:
+   1. Multiple servers are configured with the same IPv6 Anycast address.
+   2. Routers advertise the Anycast IP using BGP (Border Gateway Protocol).
+   3. When a client sends a request, the nearest (lowest-latency) server responds.
+   4. If the closest server goes offline, routing updates automatically direct traffic to another server.
+
+- Example Scenario:
+  - Suppose a company has three data centers in the USA, Europe, and Asia, all using the same Anycast IPv6 address (2001:db8::1).
+  - A user in Europe will connect to the European data center instead of the USA or Asia, reducing latency.
+  
+  
+- Anycast vs. Other Addressing Types
+  Address Type	          Definition	                     Example	              Usage
+  Unicast	              One-to-one communication	        2001:db8::1	              Standard device communication
+  Multicast	              One-to-many communication	        ff02::1 (All nodes)	      Streaming, IPv6 discovery
+  Broadcast (IPv4 only)	  One-to-all communication	        255.255.255.255  	      Not used in IPv6
+  Anycast	              One-to-nearest communication	    2001:db8::1 (shared)	  Load balancing, DNS, CDNs
+
+Note :- in Unicast networking, we cannot assign the same IP address to multiple devices. But in IPv6 Anycast, we do assign the same IP to multiple devices, and routing protocols (like BGP or IGP) decide which device responds. 
+
+- Real-World Example: Google DNS (8.8.8.8 / 2001:4860:4860::8888)
+  - Google’s DNS servers use an Anycast IP (8.8.8.8 and 2001:4860:4860::8888).
+  - When a user queries 2001:4860:4860::8888, BGP routes it to the nearest Google DNS server.
+  
+Question :- MIN and MAX Value assign in each octet in decimal format?
+
+- IPv4 Classes
+  - Class A :- 1.0.0.0 -- 126.255.255.255 (0-127)            (Large networks (Organizations, ISPs))
+  - Class B :- 128.0.0.0 -- 191.255.255.255 (128-191)        (Medium-sized networks)
+  - Class C :- 192.0.0.0 -- 223.255.255.255 (192-223)        (Small networks (Home, Business))
+  - Class D :- 224.0.0.0 -- 239.255.255.255 (224-239)        (Multicast networks)
+  - Class E :- 240.0.0.0 -- 255.255.255.255 (240-255)        (Experimental use)

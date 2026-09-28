@@ -1,0 +1,175 @@
+DTP (Dynamic Trunking Protocol)
+
+- How Many Ways to Configure a Port as Access or Trunk on a Cisco Switch?
+  
+  - There are 2 main ways to configure a switch port:
+   1. Static
+   2. Dynamic (Negotiated)
+      - Uses DTP (Dynamic Trunking Protocol) to automatically negotiate trunking between switches.
+
+  1. Manual Access Port Configuration (Static)
+     #Switch(config)# interface fa0/1
+     #Switch(config-if)# switchport mode access
+     #Switch(config-if)# switchport access vlan 10
+     - Port Fa0/1 is now an Access port for VLAN 10.
+	 
+  2. Manual Trunk Port Configuration (Static)
+     #Switch(config)# interface fa0/2
+     #Switch(config-if)# switchport mode trunk
+     #Switch(config-if)# switchport trunk allowed vlan 10,20,30
+     - Port Fa0/2 is now a Trunk port and allows VLAN 10, 20, and 30.
+	 
+  3. Dynamic Trunk Port Configuration (Using DTP)
+    - What is DTP (Dynamic Trunking Protocol)?
+      - DTP is a Cisco proprietary protocol (only works between Cisco devices).
+      - Used to negotiate trunk links automatically between two Cisco switches.
+      - It is used to automatically negotiate whether a switch port becomes a Trunk Port or stays an Access Port.
+	  
+	- Why Do We Use DTP?
+      Purpose	                   Description
+      Automatic trunk creation	   DTP allows two switches to automatically agree to form a trunk link without manual trunking configuration.
+      Simplifies configuration	   Network engineers don't need to manually configure trunking on every link.
+      Faster topology changes	   Helps in environments where devices are added/removed frequently — the switch automatically adjusts.
+      Dynamic behavior	           Ports can dynamically change from Access to Trunk based on the neighbor's behavior.
+      Saves Time	               Especially useful in large networks to save manual effort.
+	  
+	- How DTP Works (Behind the Scenes)
+      - Each Cisco switch port sends DTP messages to the directly connected neighbor device.
+      - These messages advertise its intention:
+        - "I want to be a trunk" (desirable) or
+        - "I will trunk if you ask" (auto)
+      - If both sides agree based on their DTP settings, the link becomes a trunk.
+      - If not, it stays as an access port.
+      - DTP messages are sent every 30 seconds.
+	  
+	- DTP Operating Modes
+      Mode	             Behavior
+      access	         Forces the port to be Access (no trunk negotiation).
+      trunk	             Forces the port to be Trunk (no negotiation needed).
+      dynamic auto	     Will become a trunk only if the other side is dynamic desirable or trunk.
+      dynamic desirable	 Actively tries to negotiate and form a trunk.
+      nonegotiate	     Disables DTP — must manually configure trunking on both sides.
+	  
+	- Example:
+      - Suppose two Cisco switches are connected.
+        - Switch A is set to dynamic desirable
+        - Switch B is set to dynamic auto
+      - Result:
+        - Switch A will actively send DTP messages to form a trunk.
+        - Switch B will accept and the port will become a trunk link automatically.
+		
+    - Important:
+      Best Practices	                                Reason
+      Disable DTP on trunk ports (use nonegotiate)	    Avoid accidental trunk formation which could cause security issues.
+      Manually configure trunk ports	                In production networks, manual configuration is safer and more predictable.
+	  
+	- To disable DTP:
+      Switch(config-if)# switchport nonegotiate
+	  
+	- Check Interface Mode (Access/Trunk)
+      #Switch# show interfaces [interface-id] switchport
+	  #Switch# show running-config interface [interface-id]
+	  
+	  
+	- Diagram 
+	                           #switchport mode access
+	 - Static (ON Mode)  ---> 
+                               #switchport mode Trunk
+
+
+                                               Dynamic Auto --> Reply  #switchport mode dynamic auto                        
+     - Dynamic DTP(Dynamic Trunking Protocol) 
+                                               Dynamic Desirable --> Initiate , Reply  --> swithchport mode dynamic desirable 
+											   
+	 - 2 switch 
+	 
+	  Auto         Desirable         Trunk Link
+      Desirable    Auto              Trunk Link
+      ON mode      Auto              Trunk Link 
+      On mode      On mode           Trunk Link
+	  Desirable    Desirable         Trunk Link 
+      On Mode      Desirable         Trunk Link 
+      Auto         Auto               X (Access Link)
+
+-------------------------------------------------------------------------------------------------------------------------------------------
+How to create vlan in Cisco Switch 
+
+  - How to check vlan on switch 
+    #show vlan 
+	
+  - we can create vlan from privilage mode.
+    #vlan database
+	#vlan 2
+	#vlan 3 name IT
+	#vlan 4 name HR 
+	#show vlan 
+	Note :- in this case no port exist on any vlan we need to manually add port in each and every vlan.
+	
+  - we can create vlan on global configuration mode also 
+    #vlan 10
+	#name Accountant 
+	
+	#vlan 11
+	#name Test
+
+LAB of access port and trunk port.
+How 2 vlan can communicate in different switch 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+STP (Spanning Tree Protocol)
+
+  - Why STP is required 
+    - we need redundancy, but there will be a broadcast message!
+	
+  - Redundancy Topology 
+   - To Eliminate single point of failure, backup link are used.
+   - This type of network is calles as a redundant topology.
+   
+  - Problem in Redundant Topologies
+   - In a switched network, loops can easily form if there are redundant links (which are often intentionally created for redundancy/failover).
+   - Without STP:
+     - Broadcast Storms occur (frames keep looping endlessly).
+     - MAC table instability (switches keep updating the MAC table incorrectly).
+     - Multiple Frame Copies (duplicate frames flood the network).
+     - Result: Network becomes very slow, or completely crashes.
+   - The above problem are collectively called as layer 2 switching loops.
+   
+  - Purpose/Use of STP:
+    Purpose	                 Explanation
+    Prevent loops	         STP blocks certain ports intelligently to break loops.
+    Redundancy support	     If a link fails, STP recalculates and reactivates a backup path.
+    Stabilize network	     It keeps the switching environment efficient and organized.
+    Avoid broadcast storms	 Stops infinite frame flooding in the LAN.
+	
+  
+  - What is STP (Spanning Tree Protocol)?
+    - STP (Spanning Tree Protocol) is a Layer 2 protocol used in switching networks to prevent loops.
+      - Full Form: Spanning Tree Protocol
+	  - Spanning-tree protocol is used in switched network to avoid switching loops or L2 loops
+      - STP is open standard Defined by: IEEE 802.1D Standard
+	  - It block all the redundant paths and provides a loop free L2 path 
+	  - It elect a Root Bridge which become refrence point to build loop free topology 
+	  - It uses BPDU for communication between switches.
+	  - Enable by default on all Cisco Switches.
+	  
+  - How STP Works (Basic Idea):
+    - STP uses an election and decision process to create a Loop-Free Logical Topology:
+      1. Elect a Root Bridge (Master switch that acts as a reference point).
+	  2. BPDU are exchanged between all the switches to elect Root bridge.
+	  3. BPDU contain information that helps the switch to determine the topology.
+	  4. BPDU are sent every 2 sec.
+      2. Calculate the Best Path to the Root Bridge (using path cost).
+      3. Designate Ports:
+         - Root Port (Best path toward root)
+         - Designated Port (Best path on a segment)
+         - Blocked Port (Ports that are turned off to prevent loops)
+    - Blocked ports are not forwarding traffic but are ready to reactivate if needed!
+	
+  - Election in STP:
+    - Switch with the lowest Bridge ID (Priority + MAC Address) becomes Root Bridge.
+	- The winner must be: 1-Lowest Priority, 2-Lowest MAC Address
+	- Other switches connects to Root Bridge through the best path cost(Lowest)
+	- Select Lowest sender's bridge ID 
+	- Select Lowest sender's Port ID
+    - Default Priority = 32768. (Lower is better).

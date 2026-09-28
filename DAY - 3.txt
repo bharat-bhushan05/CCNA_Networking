@@ -1,0 +1,419 @@
+Networking Devices 
+ 
+- Networking Devices :- To build a network, we need specific hardware. Here are the most common networking devices:
+
+    - Repeater: A Repeater is used to regenerate and amplify signals in a network to extend the transmission distance.
+	- Modem: Connects to the internet via ISP (e.g. DSL(Digital Subscriber Line) or Fiber modem)
+	- Hub: Basic  device that forwards data to all connected devices. (Not commonly used today, Rarely used now)
+	- NIC(Network Interface card): NIC allows a computer, server, or any network device to connect to a network and communicate with other devices.
+	- Bridges: A Bridge connects two or more device and helps manage traffic between them. It filters, forwards, and manages data based on MAC addresses.
+	- Switch: Connects multiple devices within the same network. (e.g. Office switch, Cisco Catalyst)
+	- Router: Connects different networks & directs data (e.g., your home to the internet, Home router, Cisco ISR).
+    - Access Point (AP): Provides Wi-Fi access in a network. (e.g. Office or home Wi-Fi AP)
+    - Firewall: Security device that controls network traffic. (e.g. Cisco ASA, Fortinet Firewall) 
+	
+	
+  - Analogy:
+    - A Router is like a postal service sorting packages to different destinations.
+    - A Switch is like a mailroom distributing mail to employees in the same office.
+
+
+Question:- What is Repeater?
+Ans :- A Repeater is a network device that receives, amplifies, and retransmits signals to extend the range of a network. It is used in wired and wireless networks to combat signal degradation over long distances.
+
+1. How a Repeater Works
+    - When a data signal travels through a network cable or wirelessly, it weakens due to distance(Attenuation?).
+	- Electromagnetic interference (EMI) from power lines, electronic devices, or other signals can weaken data transmission and Interference (Noise)
+    - A repeater receives the weak signal, amplifies it, and then forwards it.
+    - This helps maintain signal strength and data integrity(accuracy, consistency, and reliability) over long distances.
+  - Example:
+    - In Ethernet networks, a repeater can extend a 100-meter limit of a cable by boosting the signal.
+    - In Wi-Fi networks, a repeater extends the range of a wireless signal in large buildings
+
+
+2. Types of Repeaters
+   1. Analog Repeaters
+       - Amplifies the incoming signal and transmits it without checking for errors.
+       - Used in older telecommunication networks.
+   
+   2. Digital Repeaters
+       - Receives a signal, regenerates it, and removes noise before retransmission.
+       - Used in modern fiber-optic and wireless networks.
+   
+   3. Wireless Repeaters (Wi-Fi Extenders)
+       - Used in Wi-Fi networks to boost weak signals and extend coverage.
+       - Example: Wi-Fi Range Extenders placed in large homes or offices.
+
+   4. Optical Repeaters (for Fiber-Optic Networks)
+       - Used in fiber-optic communication to boost light signals over long distances.
+       - Example: Used in undersea fiber-optic cables for global internet connectivity.
+
+3. Advantages of a Repeater 
+   - Extends network range – Overcomes cable length limitations.
+   - Boosts signal strength – Improves communication reliability.
+   - Easy to install – Simple plug-and-play devices.
+   - Cost-effective – Cheaper than replacing network cables.
+
+4. Limitations of a Repeater
+   - No Filtering – It forwards all signals, including noise and errors.
+   - Limited Connectivity – Works only within the same network type (Ethernet, Wi-Fi, fiber).
+   - Latency Issues – Can introduce slight delays due to signal processing.
+
+5. When to Use a Repeater?
+   - When extending Ethernet cables beyond their maximum length (e.g., 100m for Cat5e).
+   - When boosting weak Wi-Fi signals in large buildings or homes.
+   - When improving fiber-optic transmission over long distances.
+
+Question :- What is Modem?
+Ans :- A Modem (Modulator-Demodulator) is a device that converts digital signals from a computer into analog signals for transmission over telephone lines, cable systems, or fiber-optic networks. It also converts incoming analog signals back into digital form, allowing computers and other devices to communicate over the internet.
+
+1. Functions of a Modem
+    - Converts Digital to Analog Signals (Modulation) – Converts data from a computer into a signal that can travel over traditional communication lines.
+    - Converts Analog to Digital Signals (Demodulation) – Converts the incoming signal back into a digital format for the receiving device.
+    - Provides Internet Connectivity – Connects to an ISP (Internet Service Provider) to access the internet.
+    - Handles Error Detection & Correction – Ensures data integrity during transmission.
+   - Example:
+      - When you browse the internet, your modem converts your device's digital request into an analog signal, sends it to your ISP, and then converts the response back to digital for display.
+
+2. Types of Modems
+   1. Dial-up Modem (Old Technology)
+       - Uses telephone lines (PSTN)(Publicly Switched Telephone Network) for internet access.
+       - Very slow (up to 56 Kbps).
+       - Requires dialing into an ISP.
+       - Example: Used in early 1990s-2000s internet connections.
+   2. DSL Modem (Digital Subscriber Line)
+       - Uses telephone lines but allows internet & phone calls simultaneously.
+       - Speeds range from 1 Mbps to 100 Mbps.
+       - Example: Used by AT&T DSL, BSNL broadband.
+   3. Cable Modem
+       - Uses coaxial cables from cable TV providers for high-speed internet.
+       - Speeds range from 50 Mbps to 1 Gbps.
+       - Example: Used by Xfinity, Spectrum, Cox.
+   4. Fiber Optic Modem (ONT - Optical Network Terminal)
+       - Uses fiber-optic cables for ultra-fast internet.
+       - Supports speeds of 1 Gbps and higher.
+       - Example: Used by Google Fiber, Verizon Fios.
+   5. Wireless Modem (4G/5G)
+       - Uses mobile networks (LTE, 5G) instead of wired connections.
+       - Provides internet via SIM cards or mobile networks.
+       - Example: Used in portable hotspots, USB modems, and routers with SIM slots.
+
+3. Modem vs. Router – What’s the Difference?
+   Feature	           Modem	                                        Router
+   Function	           Converts signals (Digital ↔ Analog)	            Distributes internet to multiple devices
+   Connection	       Connects to ISP (Internet Service Provider)	    Connects multiple devices to a network
+   Device Limit	       Connects one device (direct internet access)	    Connects many devices (Wi-Fi, Ethernet)
+   Example	           DSL, Cable, Fiber Modems	                        Wi-Fi Routers, Mesh Networks
+ - Most home setups use a Modem + Router Combo for better connectivity!
+
+4. How to Choose the Right Modem?
+   - Check Your ISP Compatibility – Some ISPs provide specific modems.
+   - Consider Speed Requirements – Choose fiber or cable modems for higher speeds.
+   - Wired vs. Wireless – If mobile access is needed, go for 4G/5G modems.
+   - Standalone vs. Modem-Router Combo – Combo devices reduce clutter but limit upgrades.
+
+Question :- What is NIC (Network Interface Card).
+Ans :- A NIC (Network Interface Card) is a hardware component that allows a computer, server, or any network device to connect to a network and communicate with other devices. It provides the physical interface for wired (Ethernet) or wireless (Wi-Fi) connections.
+
+1. Functions of a NIC Card
+   - Enables network communication – Connects a device to a LAN (Local Area Network), WAN (Wide Area Network), or the Internet.
+   - Converts data – Translates digital data from the computer into electrical (Ethernet), radio (Wi-Fi), or optical (Fiber) signals.
+   - Manages MAC addresses – Each NIC has a unique MAC address used for data transfer in Layer 2 (Data Link Layer) of the OSI model.
+   - Handles network speeds – Supports 10Mbps, 100Mbps, 1Gbps, 10Gbps, and more, depending on the NIC type.
+
+2. Types of NIC Cards
+   1. Wired NIC (Ethernet NIC)
+      - Uses Ethernet cables (RJ45) to connect to networks.
+      - Supports speeds from 10 Mbps to 100 Gbps.
+      - Example: Intel Gigabit Ethernet NIC for high-speed wired connections.
+   
+   2. Wireless NIC (Wi-Fi NIC)
+      - Uses Wi-Fi signals instead of cables.
+      - Supports standards like 802.11a/b/g/n/ac/ax (Wi-Fi 6).
+      - Example: PCIe Wi-Fi Card for desktops or built-in Wi-Fi adapters in laptops.
+  
+   3. Fiber Optic NIC
+      - Uses fiber-optic cables instead of Ethernet.
+      - Provides high-speed and long-distance communication.
+      - Example: SFP (Small Form-factor Pluggable) NICs in data centers.
+   
+   4. Virtual NIC (vNIC)
+      - Used in virtual machines (VMs) to create software-based network interfaces.
+      - Example: VMware or VirtualBox Virtual Network Adapters.
+
+3. Components of a NIC Card
+   - MAC Address – A unique identifier assigned to the NIC.
+   - RJ45/Wi-Fi Antenna Port – Used for wired or wireless connectivity.
+   - LED Indicators – Show link status and activity.
+   - Network Processor – Manages data packet transmission and reception.
+   - Bus Interface – Connects to the motherboard via PCIe, USB, or integrated chipset.
+
+4. How to Check Your NIC Card?
+Ans :- 
+	
+Question :- What is Router and Switch 
+Ans :- Routers and switches are essential devices in networking, but they serve different purposes.
+
+1. How a Switch Works 🖧
+   - A switch is used within a Local Area Network (LAN) to connect multiple devices (computers, printers, servers) and efficiently manage data traffic.
+    
+	Function:
+      - Operates at Layer 2 (Data Link Layer) of the OSI Model.
+      - Uses MAC addresses (Media Access Control) to forward data only to the intended device.
+	  - it use to connect two or more device on same network
+	  - It maintain MAC Address table in CAM memory (Hardware Address).
+      - Reduces network congestion compared to older hubs.
+	  - It work with Flooding and Unicast
+      - Supports VLANs (Virtual LANs) to segment networks for better security and efficiency.
+    How It Works:
+      - A computer sends a data packet to another device in the LAN.
+      - The switch checks the MAC address in the packet.
+      - It forwards the packet only to the destination device instead of broadcasting to all.
+      - If the MAC address is unknown, the switch sends the packet to all devices (flooding).
+
+-  Example:
+     Imagine an office with 10 computers connected to a switch. If PC1 wants to send data to PC5, the switch directs the data only to PC5 instead of sending it to all 10 computers.
+	 
+	 MAC Table (Static and Dynamic)
+	 VLAN  MAC-ADDRESS  TYPE  PORT
+	 
+
+2. How a Router Works 🌍
+   - A router connects different networks (e.g., a home network to the Internet) and directs traffic between them.
+
+    Function:
+      - Operates at Layer 3 (Network Layer) of the OSI Model.
+	  - It is use to connect 2 or more different network domains and route the IP Packets to its correct destinations.
+	  - It is also responsible to select best path from the mutilple path to reach the destination.
+      - Uses IP addresses instead of MAC addresses.
+      - Makes decisions based on the best path for data to reach its destination.(Routing Protocol like RIP EIGRP and OSPF)
+      - Can use NAT (Network Address Translation) to allow multiple devices to share a single public IP address.
+      - Supports firewall and security features to protect against cyber threats.
+    How It Works:
+      - A device in your home (PC, phone) requests a website (e.g., www.google.com).
+      - The router examines the destination IP address and decides the best path to send the request.
+      - The request is sent to your Internet Service Provider (ISP) and then to Google’s servers.
+      - Google’s response follows the same path back to your router, which sends it to your device.
+
+- Example:
+     Your home router connects your local Wi-Fi network (LAN) to the Internet (WAN), ensuring all your devices can browse the web.
+
+3. Key Differences Between a Router and a Switch
+     Feature	               Switch	                                       Router
+     Function	               Connects devices in a LAN	                   Connects different networks (LAN to WAN)
+     Layer	                   Layer 2 (Data Link)	                           Layer 3 (Network)
+     Address Type	           Uses MAC addresses	                           Uses IP addresses
+     Data Forwarding	       Directs traffic inside a network	               Directs traffic between networks
+     Example	               Office network switch connecting computers	   Home router connecting Wi-Fi to the internet
+
+
+4. How They Work Together
+    - A switch is used to connect devices within a local network.
+    - A router connects that network to other networks (e.g., the internet).
+
+   Example:
+    - Home Network:
+        - Switch connects all your wired devices (PC, printer, smart TV).
+        - Router connects the entire network to the internet.
+    - Office Network:
+        - Switches connect multiple departments.
+        - Routers connect different office locations via the internet or VPN.
+
+
+Question :- What is Firewalls, IPS (Intrusion Prevention Systems) and IDS (Intrusion Detection System)
+Ans :- Both Firewalls and Intrusion Prevention Systems (IPS) are critical for network security, but they serve different purposes.
+
+1️. Firewall 
+    - A firewall is a network security device or software that monitors and controls incoming and outgoing traffic based on predefined security rules. It acts as a barrier between a trusted network (internal) and an untrusted network (internet).
+
+    - Types of Firewalls:
+      - Packet Filtering Firewall → Checks each packet’s source, destination, and port.
+      - Stateful Inspection Firewall → Tracks active connections and allows only legitimate traffic.
+      - Proxy Firewall → Acts as an intermediary between users and the internet.
+      - Next-Generation Firewall (NGFW) → Includes advanced security features like Deep Packet Inspection (DPI) and intrusion detection.
+        - Example: A firewall blocks unauthorized users from accessing a company’s internal servers.
+
+2️. Intrusion Prevention System (IPS) 
+    - An Intrusion Prevention System (IPS) is a security tool that monitors network traffic and automatically blocks malicious activities before they cause damage. It works in real-time to prevent cyber threats.
+
+    - How IPS Works?
+      - Monitors network traffic continuously
+      - Detects suspicious activity using signatures & behavior analysis
+      - Takes action to block malicious traffic
+	  - Can drop packets, reset connections, or blacklist attackers
+	  - Often integrated into firewalls or network security devices
+
+    - Types of IPS:
+      - Network-based IPS (NIPS) → Monitors traffic across the network.
+      - Host-based IPS (HIPS) → Runs on individual devices (e.g., servers, endpoints)(Tools :- snort, zeek etc).
+        - Example: 
+		    - If an attacker tries to exploit a vulnerability, IPS automatically blocks their IP address.
+			- An IPS detects a DDoS attack and automatically blocks all requests from the attacker’s IP, preventing the system from being overwhelmed.
+			
+
+    - Firewall vs IPS: What's the Difference?
+      Feature	                   Firewall	                                                  IPS
+      Purpose	                   Controls traffic flow	                                  Detects and blocks threats
+      Layer	                       Works at Network (Layer 3) and Transport (Layer 4)	      Works at Application (Layer 7)
+      Action	                   Allows/Denies traffic based on rules	                      Actively blocks attacks
+      Example Threats	           Unauthorized access attempts	                              SQL injection, DDoS attacks
+	
+	- Conclusion
+       - Firewalls = First line of defense (controls traffic).
+       - IPS = Second layer of security (detects & blocks threats).
+       - Many organizations use both together for better security (e.g., in Next-Generation Firewalls (NGFW)).
+    
+	- SQL Injection :- SQL Injection (SQLi) is a web security vulnerability that allows an attacker to manipulate a website’s database by injecting malicious SQL queries. It occurs when user input is improperly handled in SQL queries, allowing unauthorized access, data modification, or even complete database control.
+
+    - DDoS attacks :- A DDoS (Distributed Denial of Service) attack is a cyberattack where multiple compromised devices (botnets) flood a server, network, or website with massive amounts of traffic. This overloads the system, making it slow or completely unavailable to legitimate users.
+
+	
+3. IDS (Intrusion Detection System)?
+    - An IDS is a passive security system that monitors network traffic and detects suspicious activities, but does not take action to block them. Instead, it alerts administrators for further investigation.
+	
+	- Key Features of IDS:
+      - Monitors & Analyzes network traffic 
+      - Detects suspicious activities (e.g., malware, brute-force attacks)
+      - Alerts security teams but does not block traffic 
+      - Can be Network-based IDS (NIDS) or Host-based IDS (HIDS)
+
+- Example:
+   - An IDS detects that an attacker is trying a brute-force attack on a server. It logs the attempt and alerts the admin but does not block the attack.
+
+  - IDS vs IPS: Key Differences
+    Feature	              IDS (Intrusion Detection System)	          IPS (Intrusion Prevention System)
+    Action	              Detects & alerts about threats  	          Detects & actively blocks threats 
+    Response	          Passive (no action taken)	                  Active (prevents attacks)
+    Deployment	          Monitors & logs events	                  Blocks malicious traffic in real-time
+    Placement	          Inside the network	                      Between network & external traffic
+    Example	              Notifies about a hacker’s IP	              Blocks hacker’s IP automatically
+
+  - IDS vs. IPS: Which One to Choose?
+     - Use IDS if you only need monitoring & alerts but want admins to take action manually.
+     - Use IPS if you need automatic prevention of cyber threats to stop attacks before they happen.
+     - Many modern systems use both IDS & IPS for better security.
+
+ISP Connection (Current Scenario)
+
+Question :- What is OLT and ONT in networking
+Ans :- - OLT & ONT in Networking (Fiber Optic Networks)
+       - In Fiber-to-the-Home (FTTH) or Passive Optical Networks (PON), two key devices are used:
+
+ - OLT (Optical Line Terminal) – Located at the ISP’s central office, it manages and distributes fiber-optic internet to multiple users.
+ - ONT (Optical Network Terminal) – Installed at the customer’s premises, it receives fiber-optic signals and converts them for use by routers and devices.
+
+1. What is OLT (Optical Line Terminal)? 
+   - Located at the ISP’s Central Office (CO).
+   - Manages fiber-optic connections between the provider and customers.
+   - Splits data into multiple connections using an Optical Splitter.
+   - Supports downstream (ISP → User) and upstream (User → ISP) communication.
+   - Controls bandwidth allocation and maintains network efficiency.
+  
+  - Example:
+     - In an FTTH network, an OLT connects to multiple ONTs in homes and offices.
+
+  - OLT Key Features
+    - High-capacity uplink – Connects to the backbone network.
+    - Supports multiple ONTs – Manages hundreds of users.
+    - Uses Passive Optical Network (PON) technology – No active electrical components between OLT and ONT.
+    - Security & QoS (Quality of Service) – Prioritizes traffic for stable internet.
+
+2. What is ONT (Optical Network Terminal)? 
+   - Located at the customer’s home or office.
+   - Converts fiber-optic signals into Ethernet signals for routers and devices.
+   - Provides high-speed internet access with low latency.
+   - Usually includes LAN ports & Wi-Fi (depending on the model).
+
+  - Example:
+     - In a GPON-based FTTH setup, the ONT connects to the fiber cable from the OLT and provides Ethernet output to a router.
+ 
+ - ONT Key Features
+   - Receives and transmits data – Communicates with the OLT over fiber.
+   - Acts as a modem for fiber networks – Converts optical signals for home/office use.
+   - Supports VoIP, IPTV, and High-Speed Internet.
+   - Can be standalone or built into a router.
+
+3. Difference Between OLT and ONT
+   Feature	       OLT (Optical Line Terminal)	                                ONT (Optical Network Terminal)
+   Location	       ISP's Central Office (CO)	                                Customer’s home/office
+   Function	       Manages fiber-optic network & distributes connections	    Converts fiber signals for user devices
+   Connectivity	   Connects to multiple ONTs via a splitter	                    Connects to OLT via fiber
+   Role in PON	   Central hub for data transmission	                        End-user receiving device
+
+4. OLT, ONT, and ONU – What’s the Difference?
+  - OLT (Optical Line Terminal) – Central device at the ISP managing fiber network.
+  - ONT (Optical Network Terminal) – Installed at customer premises, converting fiber signals.
+  - ONU (Optical Network Unit) – Similar to ONT but used in multi-user buildings (e.g., apartments, offices).
+ 
+ - Example:
+   - In a large apartment, an ONU may be installed at a shared point, then connected to multiple users.
+
+ - OLT (ISP Side) distributes fiber-optic connections to multiple ONTs.
+ - ONT (User Side) converts fiber signals into Ethernet for home/office use.
+ - Both work together in FTTH networks using PON technology.
+ - ONT is sometimes called ONU in multi-user setups.
+
+Question: What is Splitter?
+Ans :- A splitter is a device that divides a single signal into multiple outputs. It is commonly used in fiber-optic networks, Ethernet networks, and coaxial cable systems to distribute signals efficiently.
+
+1. Types of Splitters in Networking
+  - 1. Optical Splitter (Used in Fiber Networks - PON, GPON, EPON)
+       - Used in Fiber-to-the-Home (FTTH) and Passive Optical Networks (PON).
+       - Splits a single fiber-optic signal into multiple outputs to connect multiple users.
+       - Works passively (no power required).
+    - Example:
+       - A 1:8 fiber splitter takes one fiber connection from an OLT and splits it into eight connections for ONTs at customer locations.
+
+  Splitter Ratio	      Number of Outputs	            Use Case
+  1:2	                  2 Users	                    Small business/home
+  1:4	                  4 Users	                    Apartment complex
+  1:8	                  8 Users	                    Office building
+  1:16	                  16 Users	                    Large network deployment
+
+  - 2. Ethernet Splitter (Used in LAN Networks)
+       - Splits one Ethernet cable into two or more devices.
+       - Reduces the number of cables but can cause speed limitations.
+       - Unlike a switch, it does not manage network traffic (not recommended for high-performance networks).
+    - Example:
+       - If you have one Ethernet cable but need to connect two computers, an Ethernet splitter can allow both to share the connection (at reduced speed).
+       - Limitation: Ethernet splitters only support 100 Mbps and work in pairs.
+  
+  - 3. Coaxial Splitter (Used in Cable TV & Internet)
+       - Used in cable networks to split a single coaxial input into multiple outputs.
+       - Common in cable TV and broadband internet setups.
+       - Can cause signal loss (higher split = more loss).
+    - Example:
+       - A 1:2 coaxial splitter allows one cable connection to serve both a TV and a cable modem.
+
+2. Difference Between a Splitter and a Switch
+   Feature	              Splitter	                                         Switch
+   Function	              Divides one connection into multiple outputs	     Manages and directs network traffic
+   Power Requirement	  Passive (no power needed)	                         Requires power
+   Data Handling	      Simple signal split	                             Intelligent data routing
+   Best For	              Fiber, Coaxial, Low-speed Ethernet	             High-speed Ethernet, LANs
+ 
+  - Example:
+     - Use a fiber splitter for GPON networks but an Ethernet switch for office LANs.
+
+3. Summary
+  - A splitter divides one signal into multiple outputs.
+  - Optical splitters are used in fiber networks (PON, GPON, EPON).
+  - Ethernet splitters work in LANs but have speed limitations.
+  - Coaxial splitters are used in cable TV and broadband.
+  - For better network performance, a switch is recommended instead of an Ethernet splitter.
+
+
+Question :- what is PON(Passive Optical Network)?
+Ans :- A Passive Optical Network (PON) is a fiber-optic network that uses a point-to-multipoint (P2MP) architecture to deliver high-speed internet, TV, and voice services. It is called "passive" because it does not use active electronic components (like amplifiers) between the ISP and the end user.
+
+  - Key Features of PON:
+    - Uses optical splitters to distribute fiber to multiple users.
+    - No active components in the distribution network → Less maintenance & lower costs.
+    - Provides high-speed internet (up to 10 Gbps and beyond).
+    - Used in FTTH (Fiber-to-the-Home), FTTP (Fiber-to-the-Premises).  
+
+ - Example:
+    - A telecom provider uses PON technology to connect hundreds of homes using a single fiber line from the central office.
+
+
+

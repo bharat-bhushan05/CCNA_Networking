@@ -1,0 +1,256 @@
+EIGRP (Enhance Interior Gateway Routing Protocol)
+
+What is EIGRP(Enhance Interior Gateway Routing Protocol) :- EIGRP is a hybrid or advanced distance vector routing protocol developed by Cisco. It combines the speed and simplicity of distance vector protocols (like RIP) with the intelligence of link-state protocols (like OSPF).
+  - It's Cisco proprietary, but newer versions are open-standard and supported on some non-Cisco devices.
+  - A Hybrid routing protocol has the advantage of both protocols, distance vector and link state and merges them into a new protocol. Typically, hybrid routing protocol are based on a Distance vector protocol but contain many of the feature and advantage of Link state routing protocols.
+  
+  - Why Use EIGRP?
+   - EIGRP is:
+     - Fast-converging (15 sec)
+     - Efficient with bandwidth(Incremental Update)
+     - Highly scalable
+     - Supports VLSM, CIDR, unequal-cost load balancing
+     - Uses the DUAL algorithm to find loop-free paths
+	 
+	 
+  - Key Features of EIGRP:
+    Feature	                                  Explanation
+    DUAL Algorithm	                          Ensures loop-free and backup paths using Feasible Successor.
+    Unequal Cost Load Balancing	              Supports multiple routes to a destination with different costs (unique to EIGRP RIP and OSPF don’t support).
+    Classless Protocol	                      Supports VLSM, CIDR, and discontiguous networks.
+    Rapid Convergence	                      Much faster than RIP, thanks to DUAL and event-triggered updates.(15 Sec)
+    Uses Reliable Transport Protocol (RTP)	  Ensures reliable delivery of routing info (unicast or multicast).
+    Partial and Bounded Updates	              Sends updates only when changes occur and only to affected routers, saving bandwidth.Use IP (224.0.0.10)
+    Supports Multiple Network Protocols	      Can route IPv4, IPv6, IPX, AppleTalk (historically).
+    Metric Based on Multiple Factors	      Bandwidth, delay (by default), and optionally load, reliability, MTU.
+	Summarization                             It gives an auto summarization feature.
+	AD(Administrative Distance)               90 Internal, 170 External.
+	Equal-cost load balancing	              Up to 4 paths by default, Up to 16 paths maximum (if configured)
+	EIGRP Port Number                         88
+	
+  - EIGRP Metrics Formula:
+    - EIGRP uses a composite metric, meaning it can take multiple characteristics of the route into account:
+      1. Bandwidth
+      2. Delay
+      3. Reliability
+      4. Load
+      5. MTU (not used in metric calculation, but tracked)
+      - The metric formula is influenced by values called K-values.
+	  - How to check on interface (#show interface fa0/0)
+	  
+	- EIGRP Metric Formula
+      - By default, EIGRP uses:
+      - Metric = [(10^7 / Bandwidth) + Delay] × 256
+        - Bandwidth: Minimum bandwidth (in kbps) along the path
+        - Delay: Sum of delays (in 10s of microseconds) along the path
+        - This default metric considers bandwidth and delay only, unless you change the K-values.
+		
+	- K-Values in EIGRP
+      - K-values are tuning knobs for the metric calculation.
+        K-Value	     Represents	             Default Value
+        K1	         Bandwidth	             1
+        K2	         Load	                 0
+        K3	         Delay	                 1
+        K4	         Reliability modifier	 0
+        K5	         MTU	                 0
+		
+	- To View K-values:
+     - Router# show ip protocols
+     - Important:
+     - K-values must match on all routers in the same EIGRP AS — if they don’t, neighbors will not form!
+	 
+	 
+  - EIGRP Default Metric Formula (Example)
+    - Metric = [(10^7 / Bandwidth) + Delay] × 256
+    - Bandwidth is the minimum bandwidth (in kbps) along the path.
+    - Delay is the sum of delays (in tens of microseconds) across all interfaces on the path.
+	- Let’s say we have a path that includes two interfaces:
+      Interface	   Bandwidth	               Delay
+      Fa0/0	       100,000 kbps(100 Mbps)	   100 µs
+      S0/0	       1,544 kbps (T1)	           20,000 µs
+  
+  - Step 1: Bandwidth Calculation
+    - Take the lowest bandwidth along the path:
+    - Bandwidth = 1,544 kbps
+    - Now apply:
+      10^7 / Bandwidth = 10,000,000 / 1544 ≈ 6476.62
+	  
+  - Step 2: Delay Calculation
+    - Sum the delays on all interfaces (in µs), then divide by 10:
+      Delay = (100 + 20000) / 10 = 2010
+	  
+  - Step 3: Plug into the Metric Formula
+    - Metric = (6476.62 + 2010) × 256
+    - Metric ≈ 8486.62 × 256
+    - Metric ≈ 2,174,544
+    - So the EIGRP metric for this route is approximately: 2,174,544
+  
+  
+  - What is the Maximum Hop Count for EIGRP?
+     - Default	  100 hops
+     - Maximum	  255 hops (manually configurable)
+	 
+  - EIGRP work with 5 Packets and 3 Table.
+	  
+  - How EIGRP Works:
+    - In EIGRP 1st established Neighborship then share update with each other.
+    - Neighbors discovered via hello packets (multicast on 224.0.0.10) and Hello Packets are send every 5 second & Hold Timer 15 sec.
+    - Neighbor table is built
+    - DUAL algorithm calculates the successor (best route) and feasible successor (backup)
+    - Topology table stores all learned routes
+    - Routing table only contains the best route(s)
+	
+  - EIGRP Packets Types :- EIGRP uses 5 main types of packets to maintain and build routing information (Hello, Update, Query, Reply, ACK).
+   Packet Type	    Purpose	                         Reliable?	                     Multicast/Unicast
+   Hello	        Neighbor discovery/keepalive	  No	                         Multicast
+   Update	        Send routing information	      Yes	                         Unicast or Multicast
+   Query	        Ask about a route	              Yes	                         Multicast
+   Reply	        Respond to a query	              Yes	                         Unicast
+   ACK	            Acknowledgment of receipt	      No (used for reliable ones)	 Unicast
+  
+  1. Hello Packet
+    - Purpose:
+      - Used to discover and maintain neighbor relationships.
+      - Sent periodically by EIGRP-enabled interfaces.
+    - Details:
+      - No acknowledgment needed
+      - Multicast to 224.0.0.10 (Uses multicast address FF02::A)
+      - If a neighbor fails to send Hellos within the hold time, it's declared down.
+	  
+	- Default Hello Timers:
+      Interface Type	    Hello Timer	     Hold Timer
+      High-speed (LAN)	    5 sec	         15 sec
+      Low-speed (WAN)	    60 sec	         180 sec
+	  
+  
+  2. Update Packet
+    - Purpose:
+      - Used to send routing information (topology data).
+      - Sent only when a change occurs or new neighbors appear.
+    - Details:
+      - Contains information about routes and their metrics.
+      - Sent reliably — requires ACK.
+      - Sent multicast (224.0.0.10) to all neighbors or unicast to a specific one.
+    - Example: When a new neighbor comes up, the router sends its entire routing table via Update packets.
+	
+  3. Query Packet
+    - Purpose:
+      - Used to ask neighbors about a specific route.
+      - Triggered when a route goes into an active state (e.g., it’s lost, and no backup is available).
+    - Details:
+      - Sent multicast
+      - Requires a Reply
+      - Sent reliably
+    - Example: "Hey, do you have a route to network 192.168.5.0?"
+	
+  4. Reply Packet
+    - Purpose:
+      - Response to a Query
+      - Contains information about the requested route (either "yes, I have it" or "no, I don’t")
+    - Details:
+      - Sent unicast (back to the router that asked)
+      - Sent reliably
+      - Required to terminate the active state
+    - Example: “Yes, I still have a valid route to 192.168.5.0.”
+	
+   5. ACK Packet
+    - Purpose:
+      - Acknowledge the receipt of Update, Query, or Reply packets.
+    - Details:
+      - A small, header-only packet.
+      - Sent unicast
+      - Not acknowledged itself (unreliable)
+	  
+  - Recap Diagram
+    +-----------+         Hello          +-----------+
+    |  Router A |  ------------------->  |  Router B |
+    |           |  <-------------------  |           |
+    |           |         Hello          |           |
+    +-----------+                        +-----------+
+
+      - Update → Sent when new routes appear  
+      - Query → Sent when route is lost
+      - Reply → Sent in response to Query
+      - ACK   → Confirms Update/Query/Reply was received
+  
+  - EIGRP Uses 3 Main Tables:
+    Table Name	       Purpose
+    Neighbor Table	   Tracks directly connected EIGRP neighbors
+    Topology Table	   Stores all learned routes & their metrics
+    Routing Table	   Holds best routes installed in the router
+	
+  1. Neighbor Table – "Who am I talking to?"
+    - Purpose: Stores information about directly connected routers that are EIGRP neighbors.
+    - Established by: Receiving Hello packets.
+    - Stored info:
+      - Neighbor IP address
+      - Interface through which neighbor is reachable
+      - Hold time (how long we consider the neighbor alive)
+      - Uptime (how long the neighbor has been up)
+      - Smooth round-trip time (SRTT), used for EIGRP metrics
+	  
+	- Command to view it:
+      #show ip eigrp neighbors
+      - Think of it like your contacts list — it tells your router who it's peering with in EIGRP.
+	  
+  2. Topology Table – "What do my neighbors know?"
+    - Purpose: Stores all possible routes learned via EIGRP — even non-best paths.
+    - Every route includes:
+      - Successor: Best next-hop router for a route (installed in routing table)
+      - Feasible Successors: Backup routers (loop-free alternative)
+      - Metric info: Bandwidth, delay, etc.
+    - Built using updates from neighbors in the Neighbor Table.
+	- Command to view it:
+      #show ip eigrp topology
+	- Think of this as your "brainstorm" list of all routes you've learned — you're not using all of them, but you keep them handy in case you need them later.
+	
+	- Topology Table Route States:
+      Route State	   Meaning
+      Passive	       Route is stable and working 
+      Active	       Route is being recomputed (e.g., lost path)
+      - Passive = good.
+      - Active = means DUAL is working to find a new path (uses Queries & Replies).
+	
+	
+  3. Routing Table – "What routes do I actually use?"
+    - Purpose: Stores only the best routes from each routing protocol.
+    - Routes from the topology table are installed here if:
+      - They’re the lowest-metric (best) route
+      - And the route is in passive state
+	- Command to view it:
+      #show ip route
+	- This is your final GPS — it's the map your router is actually using to forward packets.
+	
+  - Flow Between Tables (Visualized)
+    Neighbor Table  -->    Topology Table  -->      Routing Table
+         👥                     🧠                     🛣️
+    "Who are my            "What routes did         "Which routes 
+    EIGRP neighbors?"      I learn from them?"      do I use now?"
+	
+  - EIGRP Terminology:
+    Term	      Stands For	           Meaning
+    FD	          Feasible Distance	       Total metric to reach the destination through the best path
+    AD	          Advertised Distance	   Metric reported by the neighbor to reach a specific network
+    Suc 	        The best next-hop router to reach a destination
+    FS	          Feasible Successor	   A backup route that meets specific conditions to be loop-free
+	
+  1. Feasible Distance (FD) :- It is the total metric (delay + bandwidth + other K-values) from the local router to the destination via a particular path.
+     - Used for: Choosing the best route (Successor)
+     - The route with the lowest FD is installed in the routing table.
+     - FD = AD + Cost from local router to neighbor
+	 
+  2. Advertised Distance (AD) (Also called Reported Distance - RD) :- The metric reported by the neighbor (via an EIGRP update) about how far they are from the destination.
+     - It’s how far the destination is from the neighbor’s perspective.
+     - Think of it as “how far my neighbor says the destination is”
+	 
+  3. Successor :- The best path (lowest FD) to reach a destination.
+     - Installed in the routing table
+     - There can be multiple successors if multiple routes have the same FD
+     - These are the routes your router uses to forward packets.
+	 
+  4. Feasible Successor (FS) :- A backup path to the destination that is guaranteed loop-free
+     - Requirement: The AD of the FS must be less than the FD of the current Successor.
+	 - Feasibility Condition (FC):
+       # AD(FS) < FD(Successor)
+     - If this is true, then the backup route is stored in the topology table as a Feasible Successor.
+     - If the primary path fails, the router instantly switches to the FS — no recalculation required.

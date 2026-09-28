@@ -1,0 +1,319 @@
+Types of the Switch:-
+
+  1. Unmanaged Switch
+    - Plug and Play device → no need to configure.
+    - Very basic switching — just connects devices and forwards data.
+    - No VLAN, no security features.
+    - Ideal for: Small offices, homes.
+    - Example: A basic 8-port TP-Link switch.
+	
+  2. Managed Switch
+    - Fully configurable: you can set up VLANs, QoS, STP, Security features.
+    - Supports remote management via Telnet, SSH, SNMP.
+    - Can do troubleshooting like port mirroring.
+    - Ideal for: Enterprises, campuses, large networks.
+    - Example: Cisco Catalyst Series Switches.
+	
+  3. Smart Switch (Lightly Managed Switch)
+    - Semi-managed → Limited configuration options.
+    - You can set basic VLANs, QoS.
+    - No advanced routing or high-end features.
+    - Ideal for: Small businesses needing basic control.
+    - Example: Netgear Smart Managed Pro Switches.
+	
+  4. Layer 2 Switch
+    - Operates at Data Link Layer (Layer 2).
+    - MAC address based switching.
+    - Does not route IP traffic (no Layer 3 routing).
+    - Example: Basic Cisco 2960 series switch.
+	
+  5. Layer 3 Switch
+    - Operates at both Layer 2 and Layer 3.
+    - Can perform routing functions (like routers) between VLANs (Inter-VLAN Routing).
+    - Faster than routers for internal LAN routing.
+    - Ideal for: Large networks needing VLAN to VLAN communication.
+    - Example: Cisco Catalyst 3850, 9300.
+	
+  6. PoE Switch (Power over Ethernet Switch)
+    - Provides power + data over one Ethernet cable.
+    - Powers devices like IP Phones, CCTV Cameras, Wireless Access Points.
+    - No separate power supply needed for devices.
+    - Example: Cisco Catalyst 2960-X series with PoE support.
+	
+  7. Stackable Switch
+    - Multiple switches can be combined into a single logical switch.
+    - One IP address for management.
+    - High availability and redundancy. 
+    - Easy scalability for growing networks.
+    - Example: Cisco 3750X StackWise technology.
+	
+  8. Modular Switch
+    - Switch with slots for inserting modules/cards.
+    - Highly flexible — add 10G, 40G, or fiber modules as needed.
+    - Used in data centers and core networks.
+    - Example: Cisco Catalyst 6500 Series.
+
+  9. Fixed Configuration Switch
+    - Fixed number of ports → 24, 48, etc.
+    - No flexibility to add extra cards.
+    - Cheaper and quicker to deploy.
+    - Example: Cisco Catalyst 2960.
+	
+  - Real-Life Example:
+    - Home WiFi system: Unmanaged 8-port switch.
+    - Small Office Network: Smart Switch with VLANs.
+    - Corporate LAN with VLANs: Managed Layer 2 Switch.
+    - Data Center: Layer 3 Modular Switch with Fiber modules.
+    - IP Phone Deployment: PoE-enabled Switch.
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+VLAN (Virtual Local Area Network)
+
+  - What is VLAN (Virtual Local Area Network)?
+    - VLAN stands for Virtual Local Area Network.
+    - It logically divides a single physical switch (or network) into multiple smaller, isolated networks.
+    - Devices within the same VLAN can communicate directly.
+    - Devices in different VLANs cannot communicate directly without a router or Layer 3 switch.
+   
+  - Why Do We Use VLAN? (Requirements of VLAN)
+    Reason	                    Explanation
+    1. Segmentation	            Separate departments like HR, Finance, Sales into different VLANs.
+    2. Security	                Users in different VLANs can’t talk to each other directly (isolation).
+    3. Broadcast Control	    Reduces the size of broadcast domains. (Less unnecessary traffic).
+    4. Better Performance	    With smaller broadcast domains, network becomes faster.
+    5. Flexibility	            Users can be grouped logically, not based on physical location.
+    6. Simplified Management    Easy to apply policies (QoS, Security) per VLAN.
+    7. Cost-Effective	        No need for multiple switches for different groups. Use one switch, logically divided.
+	
+  - How VLAN Works?
+    - Normally, a switch sends broadcasts to all ports.
+    - But after VLAN configuration, the switch sends broadcasts only to ports in the same VLAN.
+    - This creates multiple small, isolated networks inside one switch.
+    - Devices in the same VLAN share the same broadcast domain.
+	
+  - Example of VLAN Use:
+    Imagine one switch with 24 ports:
+    Port	   Department	 VLAN Assigned
+    1-8	       HR	         VLAN 10
+    9-16	   Finance	     VLAN 20
+    17-24	   Sales	     VLAN 30
+	
+  - Important Concepts about VLANs in CCNA:
+    Concept	             Meaning
+    Access Port	         Port assigned to one VLAN only. (User PC connections)
+    Trunk Port	         Port that carries multiple VLANs. (Switch to Switch, or Switch to Router connection)
+    Native VLAN	         VLAN that remains untagged over a trunk.
+    VLAN Tagging	     Adding VLAN ID info inside Ethernet frames (using IEEE 802.1Q protocol).
+    Default VLAN	     VLAN 1 (All ports are in VLAN 1 initially).
+    VLAN Range	         1-4094 (But 1-1005 are considered standard in many cases.)
+	
+    - What is an Access Port in VLAN?
+	  - An Access Port is a switch port that is assigned to a single VLAN.
+      - It carries traffic for only one VLAN at a time.
+      - It does not add any VLAN tagging information into the Ethernet frames — frames stay untagged.
+      - Mostly used to connect end devices like computers, printers, IP phones, etc.
+	
+	- Why Do We Use Access Ports? (Requirements of Access Port)
+      Reason	                       Explanation
+      1. Connect End Devices	       PCs, Laptops, Servers connect to Access Ports.
+      2. Assign Devices to VLANs	   Helps place end devices into specific VLANs (e.g., HR VLAN, Sales VLAN).
+      3. Simplify VLAN Management	   Easy to manage and secure traffic of devices by VLAN.
+      4. No VLAN Tagging Overhead	   Devices like PCs don't understand VLAN tags — Access Ports remove the need for them to handle tags.
+      5. Segmentation	               Separate departments logically over a single switch.
+	  
+	- How Access Port Works in VLAN?
+      - When a device sends traffic to the switch, the switch internally tags the frame with the VLAN ID.
+      - When the switch sends traffic out from an access port, it removes any VLAN tag — so the end device sees a normal Ethernet frame.
+      - End devices (like PCs) don't know anything about VLANs!
+	  
+	- Commands to Configure Access Port (Cisco Switch CLI):
+      #Switch> enable
+      #Switch# configure terminal
+      #Switch(config)# interface fa0/1
+      #Switch(config-if)# switchport mode access
+      #Switch(config-if)# switchport access vlan 10
+      #Switch(config-if)# exit
+	  - switchport mode access → Forces the port to be an access port.
+      - switchport access vlan 10 → Assigns VLAN 10 to that port.
+      - Now, any device connected to Fa0/1 will belong to VLAN 10!
+
+    - What is a Trunk Port in VLAN?
+ 	  - A Trunk Port is a switch port that carries multiple VLANs' traffic across a single physical link.
+      - It tags Ethernet frames with a VLAN ID (using protocols like IEEE 802.1Q or cisco ISL(Inter switch link)) so that VLAN information is not lost between switches.
+      - Mostly used to connect switches to other switches, switches to routers (router-on-a-stick), or sometimes switches to firewalls.
+	  
+	- Why Do We Use Trunk Ports? (Requirements of Trunk Port)
+      Reason	                      Explanation
+      1. Carry multiple VLANs	      One cable can transport traffic for several VLANs between devices.
+      2. Connect Switches	          When you have multiple switches, trunk ports allow VLANs to extend across all switches.
+      3. Router on a Stick 	          When a router handles inter-VLAN routing, trunk ports carry traffic to/from the router.
+      4. Efficient Cabling	          Reduces the number of physical cables needed (one trunk instead of many cables per VLAN).
+      5. Maintain VLAN Segmentation	  Even when traveling over a trunk link, VLAN separation is preserved.
+
+    - How a Trunk Port Works in VLAN?
+     - When a frame leaves the switch via a trunk port, the switch tags the frame with the VLAN ID (802.1Q tag).
+     - The receiving device (another switch, router) reads the tag and knows which VLAN the frame belongs to.
+     - If the trunk is connected to an Access Port, it removes the tag (untagging) before sending it to an end device (because PCs don't understand VLAN tags).
+	 
+	- Simple Example:
+     - Ima (Finance), and VLAN 30 (Sales) across both switches.
+       - Without a trunk, you wgine two switches connected together:
+       Switch A Port	      VLANs	            Switch B Port
+       Gi0/1 (Trunk)	      10,20,30	        Gi0/1 (Trunk)
+       - One cable is carrying traffic from VLAN 10 (HR), VLAN 20ould need separate cables for each VLAN! (which is messy and expensive).
+	   
+	- Commands to Configure a Trunk Port (Cisco Switch CLI):
+      #Switch> enable
+      #Switch# configure terminal
+      #Switch(config)# interface gig0/1
+      #Switch(config-if)# switchport mode trunk
+      #Switch(config-if)# switchport trunk allowed vlan 10,20,30
+      #Switch(config-if)# exit
+      #switchport mode trunk → Forces the port to be a Trunk Port.
+      - switchport trunk allowed vlan 10,20,30 → Only allows VLANs 10, 20, and 30 to pass over the trunk.
+      - Now, traffic for VLAN 10, 20, and 30 will flow through the Gi0/1 trunk link.
+	  
+	- Access Port vs Trunk Port — Super Quick
+      Feature	          Access Port	                  Trunk Port
+      VLAN Traffic	      Single VLAN Only	              Multiple VLANs
+      Tagging	          No (Untagged)	                  Yes (Tagged with 802.1Q)
+      Connects to	      End Devices (PC, Printer)       Switches, Routers, Firewalls
+      Common Usage	      Desktop, Laptop Connections	  Switch-to-Switch Links
+
+    - What is Native VLAN?
+	  - Native VLAN is a special VLAN used in Trunk links where frames that are not VLAN-tagged (untagged frames) are placed by default.
+      - In Cisco switches, the default native VLAN is VLAN 1.
+      - If a frame arrives without any 802.1Q VLAN tag, the switch assumes it belongs to the Native VLAN.
+	  
+	- Why Do We Use Native VLAN? (Requirements of Native VLAN)
+      Reason	                  Explanation
+      Handling Untagged Traffic	  Sometimes devices send Ethernet frames without VLAN tags. Native VLAN ensures those frames are properly handled.
+      Backward Compatibility	  For older devices or unmanaged switches that do not support tagging.
+      Management Traffic	      Some management protocols (like CDP, VTP) use Native VLAN for sending messages.
+      Prevent Miscommunication	  Helps switches understand which VLAN an untagged frame belongs to during trunk communication.
+	  
+	- How Native VLAN Works in a Trunk Port?
+     1. When Switch A sends a frame through a Trunk Port:
+        - If the frame belongs to VLAN 10, it will be tagged with VLAN ID 10.
+        - If the frame belongs to Native VLAN, it will be sent without a tag (untagged).
+     2. Switch B receives:
+        - If it sees a tagged frame, it knows which VLAN it belongs to.
+        - If it sees an untagged frame, it assumes it belongs to the Native VLAN.
+     - Both sides must agree on the same Native VLAN ID to avoid confusion!
+	 
+	- Simple Example:
+      Switch A Port	       Switch B Port	  Native VLAN Configured	 Result
+      Gi0/1	               Gi0/1	          VLAN 99	                 Untagged frames are treated as VLAN 99
+      - If Switch A and B both have Native VLAN 99, untagged frames are correctly handled as VLAN 99.
+	  
+	- Important Points about Native VLAN:
+      Point	                       Meaning
+      Default Native VLAN	       VLAN 1 (Cisco devices)
+      Can be changed	           Yes, for security best practices (recommended to change from VLAN 1).
+      Used for untagged traffic	   Only for frames without 802.1Q tags.
+      Both sides must match	       Native VLAN ID must be the same on both trunk ports.
+      Security Risk	               Mismatched Native VLANs can cause VLAN hopping attacks.
+	  
+	- Commands to Set Native VLAN (Cisco CLI):
+      #Switch> enable
+      #Switch# configure terminal
+      #Switch(config)# interface gig0/1
+      #Switch(config-if)# switchport trunk encapsulation dot1q
+      #Switch(config-if)# switchport mode trunk
+      #Switch(config-if)# switchport trunk native vlan 99
+      #Switch(config-if)# exit
+      - switchport trunk native vlan 99 → Sets Native VLAN to 99.
+	  
+	- What is VLAN Tagging?
+      - VLAN Tagging is a process where an extra information (tag) is added inside an Ethernet frame to identify the VLAN that the frame belongs to.
+      - This is mainly done on trunk ports, because trunk ports carry traffic from multiple VLANs between switches.
+      - The tag helps the receiving device know which VLAN a particular frame belongs to.
+      - Without tagging, a switch would not know which VLAN an Ethernet frame is associated with on a trunk.
+	  
+	- Why We Use VLAN Tagging? (Requirements of VLAN Tagging)
+      Reason	                                          Explanation
+      To carry multiple VLANs on a single trunk link	  Switches need a way to differentiate which frame belongs to which VLAN.
+      For proper VLAN segregation	                      Keeps traffic from different VLANs separated even when using the same physical link.
+      Enabling Inter-Switch VLAN Communication	          When switches exchange VLAN information, tagging helps them recognize and segregate traffic.
+      Support for Voice/Data Separation	                  In VoIP networks, voice and data VLANs use tagging to stay separate on the same port.
+	  
+	- How VLAN Tagging Works?
+     - When a switch sends a frame through a trunk port:
+       - It adds a tag that includes the VLAN ID (ex: VLAN 10).
+     - When another switch receives the frame:
+       - It reads the tag and places the frame into the correct VLAN based on VLAN ID.
+     - If the frame is destined for an Access Port:
+       - The switch removes the tag (untagging) before sending to an end device.
+	   
+	- The Tagging Standard - IEEE 802.1Q
+       - The most common VLAN tagging method is called 802.1Q (dot1q).
+       - VLAN ID field is 12 bits long, allowing VLAN IDs from 0 to 4095.
+	   
+	- Simple Example:
+      Frame Flow	                                Action
+      Host on VLAN 10 sends frame to Switch A	    Switch A tags frame with VLAN 10 ID if sending on trunk
+      Switch A to Switch B (trunk link)	            VLAN 10 tag remains attached
+      Switch B receives frame	                    Looks at tag → places frame into VLAN 10
+	  
+	- Commands to Enable VLAN Tagging (Trunk) on a Cisco Switch:
+      #Switch> enable
+      #Switch# configure terminal
+      #Switch(config)# interface gig0/1
+      #Switch(config-if)# switchport trunk encapsulation dot1q
+      #Switch(config-if)# switchport mode trunk
+      - encapsulation dot1q → Means use 802.1Q tagging.
+
+    -  What is VLAN Range?
+	  - VLAN Range refers to the set of VLAN IDs that you can use on a switch to create and manage VLANs.
+      - A VLAN ID is simply a number that uniquely identifies a VLAN inside a network.
+      - In Ethernet networks (specifically according to IEEE 802.1Q standard):
+        - VLAN IDs are 12 bits long.
+        - That gives a range from 0 to 4095.
+		
+	- VLAN ID Ranges Explained:
+      VLAN ID Range	     Category	             Description
+      0	                 Reserved	             Cannot be used. Reserved for internal use.
+      1	                 Default VLAN	         All switch ports are by default assigned to VLAN 1.
+      2 – 1001	         Normal Range VLANs	     Commonly used for standard VLANs.
+      1002 – 1005	     Reserved VLANs	         Reserved for legacy technologies like FDDI, Token Ring.
+      1006 – 4094	     Extended Range VLANs	 Used when network scaling is needed beyond normal VLAN range.
+      4095	             Reserved	             Reserved. Not usable for VLAN creation.
+	  
+	- Why VLAN Range is Important? (Requirements of VLAN Range)
+      Reason	                   Explanation
+      Organized Network Design	   Helps categorize VLANs logically (e.g., different VLAN ranges for departments).
+      Scalability	               Extended VLANs allow bigger networks (especially in large enterprise or service provider networks).
+      Compatibility	               Some protocols (like VTP) treat normal and extended VLANs differently.
+      Reserved IDs	               Reserved VLANs avoid conflicts with special technologies.
+	  
+	- Detailed VLAN Categories:
+     - Normal Range VLANs (1-1005)
+       - Stored in vlan.dat file in Flash memory.
+       - Supports features like VTP (VLAN Trunking Protocol).
+       - Widely used in regular enterprise networks.
+       - VLAN 1 is created by default — carries management traffic, CDP, STP by default.
+
+     - Extended Range VLANs (1006-4094)
+       - Created when you need more than 1005 VLANs.
+       - Stored in Running-Config (not vlan.dat) if VTP is in transparent mode.
+       - Needed in very large networks or service providers.
+       - Does not support some older VTP versions (like VTPv1/v2).
+	   
+	- Important Points:
+      Important Topic	          Description
+      VLAN 1	                  Always present, default for all ports unless reassigned.
+      VLAN 0, 4095	              Reserved for system use — cannot assign to users.
+      VLAN 1002-1005	          Automatically reserved for legacy protocols.
+      Extended VLAN (1006–4094)	  Must configure VTP in transparent mode to use.
+	  
+    - How to Create VLAN on Cisco Switch (Example):
+       #Switch> enable
+       #Switch# configure terminal
+       #Switch(config)# vlan 10
+       #Switch(config-vlan)# name HR_Department
+       #Switch(config-vlan)# exit
+       #Switch# show vlan brief
+      - This creates VLAN 10 and names it HR_Department.

@@ -1,0 +1,546 @@
+IPv6 (Internet Protocol Version 6)
+
+  - What is IPv6?
+    - IPv6 (Internet Protocol version 6) is the newer version of IP addressing designed to replace IPv4 because IPv4 was running out of addresses.
+    - IPv4 uses 32 bits (like: 192.168.1.1)
+    - IPv6 uses 128 bits (like: 2001:0db8:85a3:0000:0000:8a2e:0370:7334)
+
+  -   IPv4        vs       IPv6 
+  
+       IPv4                              vs                                     IPv6 
+	- IPv4 is 32-bit Address                                              - IPv6 is 128-bit Address 
+    - It's divided into 4 part and each part content                      - It's Divided into 8 part and each part content 16 bit address that is 
+      8 bit address that is also know as octet                   	        also known as block 
+	- IPv4 binary bits are separated by a dot(.)                          - IPv6 binary bits are separated by a colon (:)
+	- It's support decimal(e.g., 192.168.1.1) number system               - It's support Hexa-decimal (e.g., 2001:db8::1) number system.
+	- It's support Unicast, Multicast, Broadcast                          - It's support Unicast, Multicast, Anycast 
+	- IPv4 supports VLSM(Virtual Length Subnet Mask).                     - IPv6 doesn't support VLSM.
+    	
+		
+  - IPv6 Address Structure
+    - An IPv6 address is 128 bits long and written in hexadecimal separated by colons :
+    - Example:
+              2001:0db8:0000:0000:0000:ff00:0042:8329
+    - Shortening IPv6 Address:
+      - Remove leading zeros.
+      - Use :: once to replace consecutive zeros.
+    - Example:
+      - 2001:0db8:0000:0000:0000:ff00:0042:8329
+        becomes
+        2001:db8::ff00:42:8329
+	  - 2001:0000:0000:0123:0000:0000:0000:2ab5
+	    becomes 
+		2001::123:0:0:0:2ab5
+		
+  - IPv6 Address Types
+    Type	       Purpose	                                      Example
+    Unicast	       Single unique sender to single receiver	      2001:db8::1
+    Multicast	   One sender to multiple receivers	              FF02::1 (All nodes)
+    Anycast	       One-to-nearest (routing to closest node)	      (No specific format; configuration based)
+    Broadcast	   NOT EXIST in IPv6	                          Use multicast instead
+  
+  - Internet Protocol Version 6(IPv6):
+    - Hexa-Decimal Language
+	- 128 bit length 
+	- 8 part
+	- Hosts = (2)128 = 340,282,366,920,938,000,000,000,000,000,000,000,000
+	
+  - in IPv6 in each block have 4 digit each digit has 4 bits.    ==>  (2)3 (2)2 (2)1 (2)0 = 8, 4 2 1
+  - Each and every block minimum value can be 0 and maximum value can be ffff
+  - There is no classes in IPv6 apart from that we have unicast ip address, multicasr IP address.
+             (Public IP Address)  Global Unicast = 2000::/3  
+  - Unicast  (Private IP Address) Unique Local   = FC00::/7
+             (APIPA IP Address)   Link Local Add = FE80::/10
+             (Loopback Add)		  Loopback Add   = ::1/128	
+
+  - Multicast (Multicast Add)     Multicast Add  = FF00::/8			 
+	
+  - Important IPv6 Concepts
+    Concept	                    Details
+    Link-local Address	        Used within the same link/segment. Always starts with FE80::/10. (auto-assigned even without DHCP).
+    Global Unicast Address	    Globally unique addresses (like IPv4 Public IPs) starting with 2xxx::/3
+    Unique Local Address (ULA)	Private address for local communication (FC00::/7)
+    Multicast Address	        Replaces IPv4 broadcast (e.g., All routers = FF02::2)
+	
+  - What is a Link-Local Address in IPv6?
+    - A Link-Local Address is a special type of IPv6 address that is only valid within a single link (network segment).
+    - It is NOT routable across routers — it only works inside the local network.
+    - Every IPv6-enabled device automatically generates a link-local address even if no DHCP server or manual configuration exists.
+	
+  - Why do we use Link-Local Addresses?
+    Purpose	                         Details
+    Essential for Communication	     Routers and devices must have a link-local address to communicate locally (even for routing protocols).
+    Routing Protocols Dependency	 Protocols like OSPFv3, EIGRP for IPv6 use link-local addresses to exchange routing information.
+    Neighbor Discovery (ND)	Devices  use link-local addresses for Neighbor Discovery Protocol (NDP) (like ARP in IPv4).
+    Automatic Address Assignment	 Devices generate it automatically (no DHCP needed).
+    Router to Router Communication	 Routers communicate with neighbors using only link-local addresses.
+    - Without Link-Local Addresses, IPv6 wouldn't work properly!
+	
+  - Range of Link-Local Address in IPv6
+    - The reserved range is:
+      FE80::/10
+    - Means first 10 bits are fixed as 1111111010 (FE80 to FEBF).
+    - Thus, any address starting between FE80:: and FEBF:: is a link-local address.
+    - Example of Link-Local Address:
+       FE80::1
+       FE80::abcd:1234:5678:9abc
+	   
+  - How are Link-Local Addresses Generated?
+    1. FE80::/10 is fixed as the prefix.
+    2. Interface Identifier (IID) is generated, usually based on:
+       - MAC address (EUI-64 format)
+       - Or randomly generated for privacy reasons.
+    - Example steps:
+       - FE80:: + Interface ID (based on MAC) → Link-Local Address.
+    - Even before you configure any IP address, the device already has a Link-Local Address assigned to its interface.
+	
+  - Important Characteristics of Link-Local Addresses
+    Feature	                          Details
+    Scope	                          Only works within a single network segment.
+    Router Forwarding	              Routers do NOT forward link-local packets outside the link.
+    Automatic Generation              Automatically created on each interface.
+    Always Required	                  Mandatory for basic IPv6 functions like routing and neighbor discovery.
+    No Manual Configuration Needed	  But you can configure it manually if you want.
+	
+  - Where exactly is Link-Local Address Used?
+    - Router to Router communications.
+    - Sending ICMPv6 messages (like "Neighbor Solicitation", "Router Advertisement").
+    - OSPFv3, EIGRP for IPv6, RIPng use it for exchanging routing information.
+    - Example:
+      - When two routers form an OSPFv3 neighbor adjacency, they talk to each other using link-local addresses, NOT global addresses.
+	  
+  - Example Cisco Commands
+    - To see Link-Local Address on a router or switch:
+       #Router# show ipv6 interface brief
+    - To manually configure Link-Local Address:
+       #Router(config)# interface GigabitEthernet0/0
+       #Router(config-if)# ipv6 address FE80::1 link-local
+
+  - What is Global Unicast Address (GUA) in IPv6?
+    - A Global Unicast Address is the IPv6 equivalent of a public IPv4 address.
+    - It is globally unique and routable across the Internet.
+    - A device with a GUA can communicate across different networks, different cities, and even worldwide (just like a public IP in IPv4).
+    - In simple terms:
+      - "GUA is a globally reachable IP address assigned to devices that need to communicate over the Internet or large networks."
+	  
+  - Why do we use Global Unicast Address?
+    Purpose	                     Explanation
+    Internet Access	             GUA is required for devices that need to communicate over the internet.
+    End-to-End Communication	 Direct device-to-device communication without NAT (Network Address Translation).
+    Unique Identification	     Every device with a GUA has a unique IPv6 address across the entire Internet.
+    Scalability	                 IPv6 GUAs allow trillions of unique addresses for all devices.
+    - Important: Unlike IPv4 (where public IPs are limited), IPv6 GUAs are abundant and scalable.
+	
+  - What is the Range of Global Unicast Address?
+    - The GUA range is:
+      2000::/3
+    - This means:
+      - First 3 bits are fixed as 001.
+      - So GUA addresses start from 2000:: to 3FFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF.
+    - Examples of GUA:
+      - 2001:0db8:abcd:1234::1
+      - 2406:3003:2000:1000::abcd
+      - 2a00:1450:4009:800::200e
+	  
+  - How is a Global Unicast Address Structured?
+    - GUA has three parts:
+      Field	                       Length	                                Description
+      Global Routing Prefix	       Variable (typically /48 or larger)	    Assigned by ISP or Internet authorities (used to route globally or used to 
+	                                                                        identify a network on the Internet).
+      
+	  Subnet ID	                   Variable(depends, typically /16          Used by organization to create internal multiple subnets.
+	                               (after global prefix)
+								   
+      Interface ID	               /64 (last 64 bits)	                    Unique address for the device (often based on MAC address or randomly generated).
+	  
+  - In simple language:
+    - Global Routing Prefix (network address from ISP) + Subnet ID (your internal subnets) + Interface ID (your device’s unique address).  
+	  
+	
+  - Structure Breakdown Example
+    - Suppose we have an IPv6 address:
+       2001:0db8:1234:5678:9abc:def0:1234:5678
+    - Now let’s split it:
+      Part	                     Bits	     Value	                  Description
+      Global Routing Prefix	     48 bits	 2001:0db8:1234::/48	  Assigned by ISP or RIR (Regional Internet Registry)
+      Subnet ID	                 16 bits	 5678	                  You can define different subnets inside your organization.
+      Interface ID	             64 bits	 9abc:def0:1234:5678	  Unique identifier for device inside that subnet.
+	
+  - Visually, the structure looks like:
+    |  Global Routing Prefix  | Subnet ID |        Interface ID         |
+    |          /48            |   /16     |            /64              |
+    |   2001:0db8:1234        |   5678    |    9abc:def0:1234:5678       |
+    - Remember:
+      - First 48 bits = Global Routing Prefix (usually given by ISP).
+      - Next 16 bits = Subnet ID (you control to create smaller networks).
+      - Last 64 bits = Interface ID (unique host/device ID).
+	  
+  - More Details about Each Part
+    1. Global Routing Prefix
+       - Identifies your network globally on the Internet.
+       - Provided by your ISP.
+       - Typically /48 or sometimes /32 if you are a large organization.
+
+    2. Subnet ID
+       - Allows you to divide your network into subnets.
+       - You have control to create many subnets (up to 65,536 if you have a /48).
+       - Helps in network design (like LANs, VLANs, departments).
+
+    3. Interface ID
+       - Uniquely identifies a device within a subnet.
+       - Normally 64 bits.
+       - Created automatically (EUI-64 from MAC address) or manually assigned.
+	   
+  - Real-world Example
+    - Suppose an ISP assigns you:
+      2001:0db8:abcd::/48
+    - You can create your own subnets:
+      Subnet Name	         IPv6 Subnet
+      HR Department	         2001:0db8:abcd:0001::/64
+      Finance Department	 2001:0db8:abcd:0002::/64
+      IT Department	         2001:0db8:abcd:0003::/64
+      Sales Department	     2001:0db8:abcd:0004::/64
+     - Each department gets a full /64 subnet, which supports trillions of devices inside!
+	 
+  - Bonus Tip: Why 64 bits for Interface ID?
+    - IPv6 designers wanted scalability.
+    - Using 64 bits allows enough unique addresses for every grain of sand on Earth!
+    - Also allows automatic generation of addresses from MAC addresses (EUI-64 process).
+  
+  - Important Points
+    - 2000::/3 block is used for Global Unicast Addresses.
+    - Devices must have a unique Interface ID inside the same subnet.
+    - The default practice is to split IPv6 addresses into a /64 network.
+
+  - What is EUI-64?
+    - EUI-64 stands for Extended Unique Identifier – 64 bits.
+    - It is a method used in IPv6 to automatically generate a 64-bit Interface ID from a device’s 48-bit MAC address.
+    - This is mostly used when a device auto-configures its own IPv6 address (without DHCP).
+    - Simple goal:
+      - Take the device's MAC address (48 bits), and expand it into a 64-bit Interface ID.
+	  
+  - How does EUI-64 generate Interface ID?
+    - It happens in three steps:
+    Step 1: Split the 48-bit MAC Address
+     - A MAC address has 48 bits (6 bytes).
+     - Example MAC:
+       AA:BB:CC:DD:EE:FF
+     - Split into two parts:
+       First 3 bytes: AA:BB:CC
+       Last 3 bytes: DD:EE:FF
+
+    Step 2: Insert "FFFE" in the Middle
+     - Insert a fixed "FFFE" between the two parts:
+       AA:BB:CC:FF:FE:DD:EE:FF
+	   
+	Step 3: Flip the 7th Bit (U/L Bit)
+     - The 7th bit of the first byte (AA in this case) must be inverted (toggle it):
+     - Example:
+       - Let's take the first byte "AA" (in hexadecimal it's 10101010 in binary).
+         - 7th bit from the left is currently 1 (Universal).
+         - Invert it to 0 (Local).
+     - New first byte becomes A8 (binary 10101000).
+     - Thus, the new Interface ID would be:
+       A8:BB:CC:FF:FE:DD:EE:FF
+	   
+  - Full Example of EUI-64
+    - Suppose you have a MAC address:
+      00:1A:2B:3C:4D:5E
+    - Apply the steps:
+      Step	          Result
+      Split MAC	      00:1A:2B and 3C:4D:5E
+      Insert FFFE	  00:1A:2B:FF:FE:3C:4D:5E
+      Flip 7th Bit	  02:1A:2B:FF:FE:3C:4D:5E
+  - So the final Interface ID becomes:
+      021A:2BFF:FE3C:4D5E
+    - Now, suppose your Link-Local address (with prefix FE80::/64) would be:
+      FE80::021A:2BFF:FE3C:4D5E
+	  
+  - Why use EUI-64?
+    - Automatic Configuration: Devices can generate their own unique IPv6 addresses without needing a DHCPv6 server.
+    - Uniqueness: The MAC address is already unique worldwide, so IPv6 addresses created using EUI-64 are also globally unique.
+    - Plug-and-Play Networking: Helps devices connect instantly with minimal configuration.
+	
+  - Quick Recap
+    Step	Action 
+    1	    Split the MAC into two halves. 
+    2	    Insert FFFE in the middle.
+    3	    Invert (flip) the 7th bit of the first byte.
+	
+  - Bonus Tip:
+    - Some modern devices randomize the Interface ID instead of using EUI-64 for privacy reasons (to avoid tracking).
+    - In real-world enterprise networks, often manual addressing or DHCPv6 is used instead of full EUI-64.
+	
+  - What is a Unique Local Address (ULA) in IPv6?
+    - Unique Local Address (ULA) is a special type of IPv6 address that is used only inside private networks.
+    - ULA addresses are not routable on the public Internet — they are similar to private IP addresses in IPv4 like:
+      10.0.0.0/8
+      172.16.0.0/12
+      192.168.0.0/16
+	- Main purpose:
+      - Internal communication within an organization without the risk of collisions if two networks merge.
+	  
+  - Why do we use ULA?
+    - Internal Connectivity: For devices that should never be accessed from the Internet (like printers, internal servers, etc.).
+    - Security: Since ULAs are not reachable from outside, they add an extra layer of isolation.
+    - Network Merging: Two different companies using ULAs can merge easily if the address space was generated randomly (low collision risk).
+    - Consistency: Devices can keep the same address even if the Internet Service Provider (ISP) changes.
+	
+  - Range of Unique Local Addresses (ULA)
+    - ULA addresses always start with:
+      FD00::/8
+      - Meaning the first 8 bits are always 11111101 (hexadecimal FD).
+	  
+  - Structure of ULA:
+    Section	         Size	     Purpose
+    Prefix	         8 bits	     Always FD
+    Global ID	     40 bits	 Randomly generated to ensure uniqueness
+    Subnet ID	     16 bits	 For internal subnetting
+    Interface ID	 64 bits	 Host address (EUI-64 or manually assigned)
+	
+  - ULA Address Format Example
+    - An example Unique Local Address:
+      FD34:56AB:78CD:0012:3456:789A:BCDE:F123
+      Part	                Example Value	      Description
+      FD	                Always FD	          Unique Local Address prefix
+      34:56AB:78CD	        Random Global ID	  Randomly generated
+      0012	                Subnet ID	          Allows you to divide network internally
+      3456:789A:BCDE:F123	Interface ID	      Unique ID for device
+	  
+  - Quick ULA Creation Example
+    - Imagine you want to create your own ULA block:
+    1. Start with FD.
+    2. Generate a random 40-bit Global ID.
+    3. Assign Subnet IDs as needed.
+    4. Assign Interface IDs normally.
+    - Example:
+      FD88:1234:5678::/48
+    - You can then subnet it like:
+      - FD88:1234:5678:0001::/64
+      - FD88:1234:5678:0002::/64
+      - FD88:1234:5678:0003::/64
+    - Each /64 subnet can be used internally for different departments or sites.
+	
+  - Comparison with Other IPv6 Address Types
+    Type	                 Purpose	                                          Example Range
+    Link-local Address	     Communicate with devices in the same network link	  FE80::/10
+    Global Unicast Address	 Internet routable address	                          2000::/3
+    Unique Local Address	 Internal (private) communication	                  FD00::/8
+	
+  - Final important points:
+    - ULA is NOT Link-local — Link-local is only for communication on the same link (no routing).
+    - ULA can be routed internally across multiple routers within the same organization.
+    - You can configure both ULA and Global addresses on the same interface (called Dual Stack).
+	
+  - Steps to Configure ULA IPv6 Address on Cisco Devices
+    1. First, Enable IPv6 Routing (if not already enabled)
+     - When working with IPv6 on Cisco routers or Layer 3 switches, you must enable IPv6 routing globally:
+       Router(config)# ipv6 unicast-routing
+     - This command allows the router to forward IPv6 packets.
+	 
+	2. Go to the Interface where you want to assign ULA
+     - Example: Suppose you want to configure on GigabitEthernet0/0:
+       Router(config)# interface GigabitEthernet0/0
+    
+	3. Assign a ULA Address to the Interface
+     - Suppose you decide on a ULA block like:
+       FD12:3456:789A::/48
+     - Now configure it:
+       Router(config-if)# ipv6 address FD12:3456:789A:1::1/64
+     - Here:
+       - FD12:3456:789A → Randomly generated Global ID.
+       - 1 → Subnet ID.
+       - 1 → Interface address (router's address in this subnet).
+       - /64 → Standard subnet size for IPv6.
+	   
+	4. (Optional) Configure a Link-local Address manually (if needed)
+     - By default, Cisco automatically assigns a Link-local address (FE80::/10) when you enable IPv6 on an interface.
+     - But you can manually configure it too if needed:
+       Router(config-if)# ipv6 address FE80::1 link-local
+     - (Useful when you want fixed Link-local addresses, for example, for better troubleshooting or static neighbor settings.)
+	 
+	- Full Example Configuration:
+      Router> enable
+      Router# configure terminal
+      Router(config)# ipv6 unicast-routing
+      Router(config)# interface GigabitEthernet0/0
+      Router(config-if)# ipv6 address FD12:3456:789A:1::1/64
+      Router(config-if)# ipv6 address FE80::1 link-local
+      Router(config-if)# no shutdown
+      Router(config-if)# exit
+      Router(config)# exit
+      Router#
+	  
+	- To Verify the IPv6 Address:
+      - Use this command:
+        Router# show ipv6 interface GigabitEthernet0/0
+      - It will show:
+        - Link-local address
+        - ULA address
+        - Status (up/up)
+      - Example output:
+         GigabitEthernet0/0 is up, line protocol is up
+         IPv6 is enabled, link-local address is FE80::1
+         Global unicast address(es):
+         FD12:3456:789A:1::1/64
+         ...
+		 
+	- Quick Recap:
+      Step	                                 Command
+      Enable IPv6 Routing	                 ipv6 unicast-routing
+      Go to Interface	                     interface GigabitEthernet0/0
+      Assign ULA Address	                 ipv6 address FDxx:xxxx:xxxx:subnet::device/64
+     (Optional) Assign Manual Link-local	 ipv6 address FE80::x link-local
+      Verify	                             show ipv6 interface [interface name]
+	  
+	- Important Notes:
+      - ULA is internal: No advertisement to public Internet.
+      - Use /64: IPv6 best practice recommends /64 subnet size.
+      - Random Global ID: Always generate random 40-bit Global ID for collision-free operation.
+      - Dual Stack: Devices can have both ULA and Global IPv6 at same time.
+
+    - Simple Visualization:
+      FD12:3456:789A:1::/64  ---> VLAN 1 (HR Department)
+      FD12:3456:789A:2::/64  ---> VLAN 2 (Finance Department)
+      FD12:3456:789A:3::/64  ---> VLAN 3 (IT Department)
+      - Same ULA prefix, just different subnet IDs!
+
+  - What is Multicast Address in IPv6?
+    - A Multicast Address in IPv6 is used to send a single packet to multiple devices at once.
+    - One-to-many communication: One sender, multiple receivers.
+    - No broadcasting in IPv6 (unlike IPv4), so multicast is more efficient and replaces the need for broadcast traffic.
+    - Example:
+      - When a router needs to find all routers on a link, it sends one multicast packet instead of broadcasting to everyone.
+	  
+  - Why do we use Multicast in IPv6?
+    - To reduce unnecessary traffic.
+    - To optimize bandwidth (only devices interested will listen).
+    - To find devices automatically (like routers, DHCP servers, neighbors).
+    - To support protocols like OSPFv3, RIPng, DHCPv6, Neighbor Discovery (ND) etc.
+    - It’s better, faster, and lighter than broadcast storms in IPv4.
+	
+  - Range of Multicast Address in IPv6
+    - IPv6 Multicast Address always starts with FF (First 8 bits are 1111 1111).
+    - Range:
+      FF00::/8
+      - This means any IPv6 address starting with FF is a multicast address.
+	  
+  - Examples of Important IPv6 Multicast Addresses:
+    Multicast Address	    Purpose
+    FF02::1	                All Nodes (every device on the link)
+    FF02::2	                All Routers (every router on the link)
+    FF02::5	                OSPFv3 routers
+    FF02::9	                RIPng routers
+    FF02::1:2	            All DHCPv6 servers/relay agents
+    FF02::1:FFxx:xxxx	    Solicited-Node multicast address (used in Neighbor Discovery)
+	  
+  - Can we assign only network part in IPv6 and automatically calculate the host part?
+    - Yes! In IPv6, you can assign just the network part (prefix), and the device can automatically generate its own host part using a technique called EUI-64.
+    - This process is called Stateless Address Autoconfiguration (SLAAC).
+	
+  - What is EUI-64?
+    - EUI-64 (Extended Unique Identifier - 64 bit) is a method used in IPv6 to automatically generate the host (Interface ID) part of an IPv6 address from the device's MAC address.
+    - MAC Address (48 bits) ➔ converted into ➔ Interface ID (64 bits).
+    - Then, device combines Network Prefix + Interface ID to form full IPv6 address!
+	
+  - How EUI-64 Works (Step-by-Step):
+    - Suppose the MAC address of a device is:
+      AA:BB:CC:DD:EE:FF
+    
+	1. Split the MAC Address into two halves:
+       AA:BB:CC and DD:EE:FF
+
+    2. Insert FF:FE in the middle:
+       AA:BB:CC:FF:FE:DD:EE:FF
+
+    3. Flip the 7th bit (the Universal/Local bit) of the first byte:
+       - Convert AA (hex) to binary.
+       - Flip the 7th bit (count from left).
+       - Convert it back to hex.
+    4. Now you have a 64-bit Interface ID.
+    5. Full IPv6 Address =
+       Network Prefix (assigned by router) + EUI-64 Interface ID
+	   
+  - Example:
+    - Network Prefix assigned by Router:
+      2001:DB8:1234:5678::/64
+    - Device MAC address:
+      00:1A:2B:3C:4D:5E
+    Steps:
+    1. Split MAC:
+       00:1A:2B and 3C:4D:5E
+
+    2. Insert FF:FE in the middle:
+       00:1A:2B:FF:FE:3C:4D:5E
+
+    3. Flip 7th bit of 00:
+       - 00 in binary = 00000000
+       - Flip 7th bit → 00000010 → 02
+
+    4. New Interface ID:
+       02:1A:2B:FF:FE:3C:4D:5E
+
+    - Final IPv6 Address:
+      2001:DB8:1234:5678:021A:2BFF:FE3C:4D5E
+      - The host now has a complete IPv6 address without manual configuration.
+	  
+  - Why is this useful?
+    Reason	                         Benefit
+    No need for DHCP server	         Devices configure themselves.
+    Saves time	                     No manual IP address assignment.
+    Automatic and unique	         Very low chance of address conflicts.
+    Efficient for large networks	 Devices join the network easily.
+	
+  - Important Points:
+    - SLAAC (Stateless Address Autoconfiguration) uses EUI-64 method.
+    - Routers advertise network prefixes using Router Advertisements (RA).
+    - Host devices listen to RA, generate their IPv6 addresses automatically.
+	
+  - Quick Recap:
+    Concept	                        Meaning
+    Assign only network part	    Yes, possible
+    Host part generated by	        EUI-64 method
+    Process name	                SLAAC (Stateless Address Autoconfiguration)
+    Benefit	                        Automation, scalability, less admin effort
+
+  
+  - How to assign IPv6 Address on Cisco Router 
+    - How to check this router is capble for IPv6 means it support Ipv6 or not, IOS version 12.4 or Advanced IP version you can see when router up.
+	or
+	- We need to run this command on cisco router (Config)#IPv6 unicast-routing on global mode to enable the ipv6 on cisco router.
+    - #int gig0/0
+	  #ipv6 address fc00::64 eui-64	  
+	  #show ipv6 interfacw brief
+	  
+	  
+  - How to Check and Configure GUA (Cisco Example)
+    - To see GUA:
+      Router# show ipv6 interface brief
+    - To manually configure GUA:
+      Router(config)# interface GigabitEthernet0/0
+      Router(config-if)# ipv6 address 2001:db8:1:1::1/64
+	  
+  - Summary of Global Unicast Address
+    Property	       Detail
+    What	           Public IPv6 address, globally unique
+    Range	           2000::/3
+    Usage	           Internet communication, end-to-end communication
+    Structure	       Global Prefix + Subnet ID + Interface ID
+    Key Feature	       No NAT, direct Internet access, abundant addresses
+
+
+	
+	
+  - IPv6 Address Allocation / Prefix
+    - Instead of subnet mask, IPv6 uses prefix length like /64.
+    - Example:
+       2001:db8:abcd:1::/64
+    - First 64 bits = Network
+    - Last 64 bits = Host (Interface ID)
+    - Common Prefix Lengths:
+      - /64 (Most common for end-user networks)
+      - /48 (Assigned to organizations)
+      - /32 (Assigned to ISPs)
+
+
+  

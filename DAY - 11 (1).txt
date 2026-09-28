@@ -1,0 +1,188 @@
+Router Modes :- Cisco routers have different modes that provide varying levels of access to the router's configuration and operational settings. These modes are essential for managing the router securely and efficiently.
+
+- Types of Router Modes & Their Uses
+  Mode	                            Prompt	                 Purpose
+  1. User EXEC Mode	                Router>	                 Basic monitoring & diagnostics (limited access)
+  2. Privileged EXEC Mode	        Router#	                 Advanced commands & troubleshooting
+  3. Global Configuration Mode	    Router(config)#	         Change global router settings
+  4. Interface Configuration Mode	Router(config-if)#	     Configure specific interfaces (e.g., FastEthernet, Serial)
+  5. Line Configuration Mode	    Router(config-line)#	 Configure terminal lines (console, SSH, Telnet)
+  6. Router Configuration Mode	    Router(config-router)#	 Configure routing protocols (e.g., OSPF, EIGRP)
+  7. ROM Monitor Mode (ROMMON)	    rommon>	                 Low-level recovery & boot diagnostics
+  
+
+- System Configuration Dialog in router :- The System Configuration Dialog is a setup wizard that appears when a Cisco router boots up for the first time or when the configuration file is missing.
+
+  - It helps network administrators quickly set up basic settings like:
+    - Hostname
+    - Enable password
+    - Interface configurations
+    - Routing settings
+  - This is an optional setup—you can either go through it or exit and configure manually.
+  
+  - When Does the System Configuration Dialog Appear?
+    1. First Boot of a New Router – If the router has no saved configuration (startup-config is empty).
+    2. After Erasing Configuration – If you erase the configuration using:
+       #erase startup-config
+       #reload
+    3. After Resetting NVRAM – If the router detects an empty NVRAM.
+
+  - How the System Configuration Dialog Looks
+    - When a router boots up without a saved configuration, you will see:
+      #Would you like to enter the initial configuration dialog? [yes/no]: 
+    - If you type yes, it will guide you through basic configurations step by step.
+    - If you type no, you will enter the User EXEC mode (Router>), and you can configure manually.
+
+  - How to Exit the System Configuration Dialog
+    - If you accidentally enter the setup mode but want to exit:
+     1. Press Ctrl + C at any point to exit immediately.
+     2. Or type no at the first prompt.
+    - After exiting, the router will display:
+      #Press RETURN to get started!
+    - Then, you will be in User EXEC Mode (Router>) where you can manually configure the router.
+
+
+
+  1. User EXEC Mode (Router>)
+   - Purpose:
+     - Provides basic access to the router.
+     - Used for viewing basic system information (but no configuration changes).
+   
+   - How to Enter:
+     - When you log in to the router, you enter User EXEC Mode automatically.
+ 
+   - Common Commands:
+     show ip interface brief  # View interface status
+     show version             # Check router IOS version
+     ping 192.168.1.1         # Send a ping request
+     exit                     # Exit session
+    
+   - Limitation:
+     - You cannot modify configurations in this mode.
+
+  2. Privileged EXEC Mode (Router#)
+   - Purpose:
+     - Provides access to advanced diagnostic and configuration commands.
+     - Allows you to view system settings and logs.
+   
+   - How to Enter:
+     - From User EXEC Mode, type:
+       #enable
+  
+   - Common Commands:
+     show running-config                  # View current configuration
+     show startup-config                  # View saved configuration in NVRAM
+     reload                               # Restart the router
+     copy running-config startup-config   # Save the configuration
+   - Exit to User EXEC Mode:
+     disable
+   - This mode is password-protected to prevent unauthorized access.
+   
+  
+  3. Global Configuration Mode (Router(config)#)
+   - Purpose:
+     - Allows modifying global settings of the router.
+     - Used to enter interface, routing, and security configurations.
+  
+   - How to Enter:
+     - From Privileged EXEC Mode (Router#), type:
+       #configure terminal
+  
+   - Common Commands:
+     hostname MyRouter          # Set router hostname
+     enable secret Cisco123     # Set enable password
+     banner motd "Welcome"      # Display login message
+   
+   - Exit to Privileged Mode:
+     exit
+	 
+	 
+  4. Interface Configuration Mode (Router(config-if)#)
+   - Purpose:
+     - Configures router interfaces (Ethernet, Serial, Loopback).
+     - Assigns IP addresses, enables interfaces, sets bandwidth.
+
+   - How to Enter:
+     - From Global Configuration Mode, type:
+       #interface FastEthernet0/0
+   
+   - Common Commands:
+     ip address 192.168.1.1 255.255.255.0     # Assign an IP
+     no shutdown                              # Enable the interface
+     description LAN Connection               # Add a description
+   
+   - Exit to Global Configuration Mode:
+     exit
+	 
+	
+  5. Line Configuration Mode (Router(config-line)#)
+   - Purpose:
+     - Configures terminal access (Console, SSH, Telnet).
+     - Controls remote access security settings.
+
+   - How to Enter:
+     - From Global Configuration Mode, type:
+       line console 0   # Configure console access
+       line vty 0 4     # Configure Telnet/SSH access
+     
+   - Common Commands:
+     password cisco         # Set login password
+     login                  # Enable login authentication
+     exec-timeout 10        # Set timeout for inactivity
+     transport input ssh    # Allow only SSH (disable Telnet)
+
+   - Exit to Global Configuration Mode:
+     exit
+	 
+  6. Router Configuration Mode (Router(config-router)#)
+   - Purpose:
+     - Configures routing protocols (OSPF, EIGRP, RIP).
+     - Controls how routers exchange data.
+
+   - How to Enter:
+     - From Global Configuration Mode, type:
+       #router ospf 1
+   
+   - Common Commands:
+     network 192.168.1.0 0.0.0.255 area 0    # OSPF network
+     router-id 1.1.1.1                       # Set router ID
+     passive-interface FastEthernet0/0       # Disable OSPF updates on an interface
+  
+   - Exit to Global Configuration Mode:
+     #exit
+
+  7. ROM Monitor Mode (ROMMON) (rommon>)
+   - Purpose:
+     - Used for troubleshooting & recovery (when the router fails to boot).
+     - Allows manually loading IOS images or resetting passwords.
+
+   - How to Enter:
+     - Restart the router and press Ctrl + Break during boot.
+
+   - Common Commands:
+     confreg 0x2142    # Bypass startup-config (password recovery)
+     dir flash:        # View Flash files
+     boot flash:c1900-universalk9-mz.SPA.152-4.M6.bin  # Manually boot IOS
+   
+   - Exit ROMMON Mode & Reboot:
+     #reset
+	 
+  - Summary Table
+    Mode	                        Prompt	                 Purpose	                              How to Enter
+    User EXEC Mode	                Router>	                 View basic system info	                  Default login
+    Privileged EXEC Mode	        Router#	                 View advanced settings & save configs	  enable
+    Global Configuration Mode	    Router(config)#	         Modify global settings	                  configure terminal
+    Interface Configuration Mode	Router(config-if)#	     Configure network interfaces	          interface FastEthernet0/0
+    Line Configuration Mode	        Router(config-line)#	 Configure console, SSH, Telnet	          line console 0
+    Router Configuration Mode	    Router(config-router)#	 Configure routing protocols	          router ospf 1
+    ROM Monitor Mode (ROMMON)	    rommon>	Recovery & boot  diagnostics	                          Restart + Ctrl + Break
+
+- (Router>clear
+   Translating "clear"...domain server (255.255.255.255)  in router and how we can come out from this.)
+   - When you type clear in User EXEC mode (Router>) on a Cisco router, the router does not recognize it as a valid command in that mode.
+   - Instead, the router thinks you are trying to resolve "clear" as a hostname using DNS resolution. This is why you see:
+      Router>clear
+      Translating "clear"... domain server (255.255.255.255)
+   - The router is trying to resolve "clear" into an IP address by contacting a DNS server.
+   - (config)#no ip domain-lookup
+   - #ctrl + shift + 6

@@ -1,0 +1,122 @@
+RIP (Routing Information Protocol) 
+
+What is RIP(Routing Information Protocol) :- RIP (Routing Information Protocol) is a distance-vector dynamic routing protocol used by routers to exchange routing information within an Autonomous System (AS).
+                                           - It helps routers automatically discover the best path to reach other networks by sharing routing tables at regular intervals.
+										   
+  - Why Use RIP?
+   - To automate routing instead of manually configuring static routes.
+   - Ideal for small to medium-sized networks.
+   - Easy to understand and implement, great for learning routing fundamentals.
+   
+  
+  - Key Features of RIP
+    Feature	                 Description
+    Routing Algorithm	     Distance Vector (Bellman-Ford Algorithm)
+    Metric Used	             Hop Count (each router counts as 1 hop)
+    Max Hop Count	         15 hops (16 = unreachable → prevents loops)
+    Update Interval	         Every 30 seconds, full routing table is sent
+    Protocol Type	         Interior Gateway Protocol (IGP)
+    Transport Protocol	     Uses UDP on port 520
+    Routing Table Updates	 Sent periodically to all neighbors
+    Loop Prevention	         Split Horizon, Hold-down Timers, Poison Reverse
+    Versions	             RIP v1, RIP v2, and RIPng (IPv6)
+	AD Value                 120
+	Load balancing           On 4 equal hop path(Maximum 6 path)
+	RIP Port Number          520
+	
+  - Load Balancing in RIP :- Load balancing in routing means a router can use multiple paths to reach the same destination if the paths are equal in cost (same metric).
+                           - Since RIP uses hop count as its metric, if two or more routes have the same hop count, RIP can distribute traffic across all of them.
+  - How Many Paths Can RIP Load Balance?
+    Version	             Max Load-Balanced Paths
+    RIP v1 & v2	         Up to 4 paths by default
+    With Configuration	 Up to 6 paths
+	
+  - You can check or configure this with:
+    #Router(config-router)# maximum-paths 4
+	
+	
+  - Versions of RIP
+   - RIP v1
+     - Classful (doesn’t support subnet info/CIDR)
+     - Broadcast-based (255.255.255.255)
+     - No authentication
+   
+   - RIP v2
+     - Classless (supports CIDR & VLSM)
+     - Multicast-based (224.0.0.9)
+     - Supports route authentication
+  
+   - RIPng
+    - For IPv6
+    - Uses multicast address FF02::9
+    - Works similarly to RIP v2 but supports IPv6
+	
+   
+   - RIP Default 
+     - Send = 255.255.255.255
+	 - Accept = 255.255.255.255, 224.0.0.9
+	 
+	
+  - How RIP Works (Step-by-Step)
+    - Initialization: Router sends out its routing table to directly connected neighbors every 30 seconds.
+    - Hop Count Metric: Each router adds 1 hop to the received route.
+    - Comparison: If the new route has fewer hops, it's added to the table.
+    - Loop Prevention: Uses methods like split horizon and hold-down timers.
+    - Route Aging: If a route isn’t refreshed in 180 seconds, it’s marked invalid.
+	 
+  - Loop Prevention Techniques in RIP
+    - Split Horizon: Prevents sending a route back in the direction from which it came.
+    - Poison Reverse: Advertises a route as unreachable if it learns the same route from the neighbor.
+    - Hold-down Timer: Temporarily suppresses changes to a route to stabilize the network.
+	
+  - RIP Timers :- RIP uses four important timers to manage the routing table and ensure the stability of the network:
+    Timer	           Default Time	     Purpose
+    Update Timer	   30 seconds	     How often the router sends routing updates to neighbors.
+    Invalid Timer	   180 seconds	     How long a route can go without an update before being considered invalid.
+    Hold-down Timer	   180 seconds	     Prevents the router from accepting potentially bad route updates after a route goes down.
+    Flush Timer	       240 seconds	     Time before an invalid route is completely removed from the routing table.
+	
+	1. Update Timer (Default: 30 seconds)
+     - Every 30 seconds, RIP sends the entire routing table to all its neighbors.
+     - Uses UDP port 520.
+     - Ensures routers keep each other informed about the network status.
+     - Think of it as RIP saying “Here’s my routing table, just in case it changed!” every 30 seconds.
+	 
+	2. Invalid Timer (Default: 180 seconds)
+     - Time a router waits to get updates, If a router doesn’t receive an update for a route within 180 seconds, the route is marked as invalid.
+     - Metric is set to 16 hops (infinite → unreachable).
+     - This timer tracks how long a route can go “silent” before it’s considered dead.
+	 
+	3. Hold-down Timer (Default: 180 seconds)
+     - Once a route is marked unreachable, RIP starts a hold-down period.
+     - During this period, RIP ignores any worse or same-metric updates about that route.
+     - Helps prevent flapping or routing loops caused by quick changes.
+     - This is RIP saying: “I’m waiting a bit before trusting new info about this broken route.”
+	 
+	4. Flush Timer (Default: 240 seconds)
+     - After a route is invalid, this is the time RIP waits before it removes the route completely from the table.
+     - Gives time for updated info to come in (if any).
+     - Flush = “Forget this route permanently after giving it one last chance.”
+	
+  - Limitations of RIP
+    - Limited to 15 hops
+    - Slow convergence
+    - Not ideal for large or complex networks
+    - No support for advanced features like load balancing based on metrics
+
+
+-----------------------------------------------------
+Configure RIP protocol on Cisco Router.
+
+R1(Config)# Router rip 
+          # network 192.168.1.0
+		  # network 192.168.2.0
+		  
+RIPv2 Configuration.
+          #Router rip
+		  #version 2
+		  
+- check Routing protocol information 
+  #show ip protocols
+  #debug ip rip (check routing protocol updates)
+  #undebug all

@@ -1,0 +1,29 @@
+- Basic Command on Router or Basic Configuration of the router :- 
+
+  - ? (for help)
+  - enable (for privilege mode)
+  - show flash:
+  - show running-config 
+  - show startup-config 
+  - show clock (check time on router)
+  - clock set 11:54:17 oct 10 2000 (set time date on router manually)
+  - copy running-config startup-config 
+  - write 
+  - configure terminal 
+  - hostname R1
+  - banner motd #Welcome in CCNA#
+  - reload
+  - configure terminal 
+  - interface fastethernet 0/0 
+  - ip address 192.168.1.1 255.255.255.0
+  - show ip interface brief 
+  - no ip add 
+  - earse startup-config 
+  - show flash
+  - delete flash:
+  - show flash 
+   
+  
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+Router Configuration Step-by-Step :-

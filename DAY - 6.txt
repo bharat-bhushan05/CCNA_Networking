@@ -1,0 +1,173 @@
+- IPv4 Classes
+  - Class A :- 1.0.0.0 -- 126.255.255.255 (0-127)            (Large networks (Organizations, ISPs))
+  - Class B :- 128.0.0.0 -- 191.255.255.255 (128-191)        (Medium-sized networks)
+  - Class C :- 192.0.0.0 -- 223.255.255.255 (192-223)        (Small networks (Home, Business))
+  - Class D :- 224.0.0.0 -- 239.255.255.255 (224-239)        (Multicast networks)
+  - Class E :- 240.0.0.0 -- 255.255.255.255 (240-255)        (Experimental use)
+
+  
+- Private vs. Public IPv4 Addresses:- (Why we use private and public ip address concept?)
+  - In 1994 when internet commercialized people come to internet intially in IPv4 there are round about 4.3 billion IP address but today's in the world total population is 8.2 billions.
+  - Many Suggestions 
+  - Extended this version
+    - Public and private IP address
+    - Subnetting (VLSM)
+    - NAT (Network address translation)
+  - New version
+    - IPv6 (Internet protocol version 6)
+  
+- Public and Private IP address in ipv4 ?.
+  -  The concept of private and public IP addresses exists to manage IP address allocation efficiently, enhance security, and allow networks to scale without exhausting the limited IPv4 address space.
+  
+  - Private IP Address :- Available and free, these IP address are used in LAN environment, which is used to communicate within the same network these IP address are choosen by network administrator according to there need and type of the network.
+  
+  - Public IP Address :- Reserved (Cost money), these IP address are used in WAN environment, which is used to communicate globally, there IP address purchase throght ISP (Internet Service Provider) for access the internet. 
+
+  - Public vs. Private IP Address – What’s the Difference?
+    Feature	                   Public IP	                                                     Private IP
+    Visibility	               Globally unique, used on the internet	                         Only used within private networks
+    Assignment	               Assigned by ISPs (Internet Service Providers)	                 Assigned by network admins (home, office, enterprise)
+    Routing	                   Accessible over the internet	                                     Cannot be directly accessed from the internet
+    Example	                   8.8.8.8 (Google DNS), 192.168.1.1 (your router’s public IP)	     192.168.1.10 (home device), 10.0.0.5 (company network)
+    Uses	                   Websites, email servers, online services	                         Local network devices (PCs, printers, IoT)
+    Security	               More vulnerable to attacks	                                     More secure (behind NAT & firewall)
+
+- Why Do We Have Private and Public IPs?
+  1. IPv4 Address Conservation (Address Space Management)
+     - IPv4 has a limited number of addresses (only 4.3 billion).
+     - If every device had a unique public IP, IPv4 would have been exhausted quickly.
+     - Private IPs allow multiple devices to share a single public IP using NAT (Network Address Translation).
+  2. Security and Isolation
+     - Private IPs aren’t reachable from the internet, making them more secure.
+     - Example: Hackers cannot directly attack a device with a private IP like 192.168.1.100.
+  3. Efficient Network Management
+     - Private IPs allow organizations to reuse IP addresses internally.
+     - Example: A company can use 192.168.1.x for office devices without conflicting with another company using the same range.
+  4. NAT (Network Address Translation) Enables Internet Access
+     - Private devices can access the internet using NAT, which translates private IPs to a public IP dynamically.
+     - Example: Your home router has one public IP (assigned by your ISP), but all your devices use private IPs (192.168.1.x).
+
+- Private IP Address Ranges (RFC 1918)
+  Class	IP     Range	                        Max Devices	          Usage
+  Class A	   10.0.0.0 - 10.255.255.255	    16 million+	          Large Enterprises
+  Class B	   172.16.0.0 - 172.31.255.255	    65,000+	              Medium-Sized Networks
+  Class C	   192.168.0.0 - 192.168.255.255	254	                  Home & Small Networks
+  - These private ranges are not routable on the public internet.
+  
+-  Example: How Private and Public IPs Work Together?
+   - Home Network Example
+     - (Your Laptop) 192.168.1.10  ────▶  (Router NAT)  ────▶  Public IP: 203.0.113.5  ───▶ Internet
+	 - Your laptop (192.168.1.10) has a private IP.
+     - Your router translates this to a public IP (203.0.113.5 assigned by ISP).
+     - Websites only see the public IP, not your private one.
+	 
+- Network Bit and Host bit in IPv4 
+  
+  - In IPv4 addressing, an IP address consists of two parts:
+    1. Network Bits → Identify the network (used for routing).
+    2. Host Bits → Identify the specific device (host) in that network.
+	
+- Network and Host Bits in IPv4 Classes
+  - IPv4 addresses are 32-bit long, and different classes have different network and host bit allocations.
+
+    Class	       Starting IP Range	          Network Bits	 Host Bits	 Default Subnet Mask	  Total Networks	  Max Hosts per Network
+    Class A	       1.0.0.0 – 126.255.255.255	  8 bits	     24 bits	 255.0.0.0 (/8)	          128 (2⁷)	          16,777,214 (2²⁴ - 2)
+    Class B	       128.0.0.0 – 191.255.255.255	  16 bits	     16 bits	 255.255.0.0 (/16)	      16,384 (2¹⁴)	      65,534 (2¹⁶ - 2)
+    Class C	       192.0.0.0 – 223.255.255.255	  24 bits	     8 bits	     255.255.255.0 (/24)	  2,097,152 (2²¹)	  254 (2⁸ - 2)
+ 
+  - The division between network bits and host bits is defined by the subnet mask (default for Class A, B, and C).
+
+  - Class A :-   N  .   H   .   H    .    H 
+  - Class B :-   N  .   N   .   H    .    H
+  - Class C :-   N  .   N   .   N    .    H   
+  
+- Why is the Network Count Different?
+  - The number of networks in Class A is 2⁷ (128) instead of 2⁸ (256) because:
+  
+  1.The First Bit in Class A is Fixed
+    - IPv4 addresses are 32-bit binary numbers.
+    - In Class A, the first bit is always 0 to identify it as Class A.
+    - That leaves only 7 bits for the network portion.
+    - Example: First 8 Bits of Class A
+    - Bit Position	 1	 2	 3	 4	  5	  6	  7	   8
+    - Fixed Bit	     0	 x	 x	 x	  x	  x	  x	   x
+    - Since the first bit is always 0, the remaining 7 bits define the network:
+    - 2⁷ = 128 possible networks (0xxxxxxx in binary).
+	- Example:
+      - 00000001.0.0.0 → 1.0.0.0
+      - 01111111.0.0.0 → 127.0.0.0
+      - However, 127.x.x.x is reserved for loopback (127.0.0.1), so only 1.0.0.0 to 126.0.0.0 are usable.
+	  
+- Why is the Host Count Full (2²⁴ - 2)?
+  - In Class A, the remaining 24 bits are used for host addresses.
+  - The formula for the maximum number of hosts is:
+  - (2) Host Bits - 2
+  - 24 bits for hosts → (2) 24 = 16,777,216224 = 16,777,216.
+  - We subtract 2 because:
+    1. One IP is reserved for the network address (all host bits 0).
+    2. One IP is reserved for the broadcast address (all host bits 1).
+    - That leaves 16,777,214 valid host addresses per Class A network.
+
+  - Network Count (128 = 2⁷) → The first bit is fixed as 0 in Class A, so only 7 bits are used for networks.
+  - Host Count (16,777,214 = 2²⁴ - 2) → All 24 bits are for hosts, minus 2 reserved addresses.
+  - This logic applies to Class B & C as well, where the number of network bits increases and host bits decrease.
+  
+- Understanding Network and Host Bits in Class A, B, and C
+  - Class B: Why 16,384 (2¹⁴) Networks but 65,534 (2¹⁶ - 2) Hosts?
+  1. Network Bits in Class B
+     - IPv4 addresses are 32-bit long.
+     - In Class B, the first two bits are always 10 (fixed to identify Class B).
+     - That leaves 14 bits for the network portion.
+  
+  - First 16 Bits of Class B
+    Bit Position	1	 2	 3	 4	 5	 6	 7	 8	 9	 10	  11	12	 13	  14	15	  16
+    Fixed Bits	    1	 0	 x	 x	 x	 x	 x	 x	 x	 x	  x	    x	 x	  x	    x	  x
+    - Since the first two bits are fixed (10), the remaining 14 bits define the network:
+    - 2¹⁴ = 16,384 possible networks (10xxxxxxxxxxxxxx in binary).
+	- Example:
+      - 10000000.00000000.0.0 → 128.0.0.0
+      - 10111111.11111111.0.0 → 191.255.0.0
+	  
+  2. Host Bits in Class B
+    - The remaining 16 bits are used for host addresses.
+    - The formula for the maximum number of hosts is: (2) Host Bits − 2
+    - 16 bits for hosts → (2) 16 = 65,536.
+    - Subtract 2 for the network and broadcast address, leaving 65,534 valid hosts.
+	- Example: Class B Network (172.16.0.0/16)
+      Address Type	          IP Example
+      Network Address	      172.16.0.0 (All host bits = 00000000.00000000)
+      First Host	          172.16.0.1
+      Last Host	              172.16.255.254
+      Broadcast Address	      172.16.255.255 (All host bits = 11111111.11111111)
+	  
+	  
+- Class C: Why 2,097,152 (2²¹) Networks but 254 (2⁸ - 2) Hosts?
+  1. Network Bits in Class C
+    - In Class C, the first three bits are always 110 (fixed to identify Class C).
+    - That leaves 21 bits for the network portion.
+    - First 24 Bits of Class C
+      | Bit Position | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | |---------------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----| 
+	    | Fixed Bits | 1 | 1 | 0 | x | x | x | x | x | x | x  |  x |  x | x  |  x |  x |  x |  x |  x |  x |  x |  x |  x |  x |  x |
+
+    - Since the first three bits are fixed (110), the remaining 21 bits define the network:
+    - 2²¹ = 2,097,152 possible networks (110xxxxxxxxxxxxxxxxxxxxx in binary).
+    - Example:
+      - 11000000.00000000.00000000.0 → 192.0.0.0
+      - 11011111.11111111.11111111.0 → 223.255.255.0
+	 
+  2. Host Bits in Class C
+    - The remaining 8 bits are used for host addresses.
+    - 8 bits for hosts → (2) 8 = 256.
+	- Subtract 2 for the network and broadcast address, leaving 254 valid hosts.
+    - Example: Class C Network (192.168.1.0/24)
+      Address Type	       IP Example
+      Network Address	   192.168.1.0 (All host bits = 00000000)
+      First Host	       192.168.1.1
+      Last Host	           192.168.1.254
+      Broadcast Address	   192.168.1.255 (All host bits = 11111111)
+	  
+Note :- - Network bits are reduced when fixed bits increase (A → B → C).
+        - More network bits = More networks, fewer hosts (Class C).
+        - More host bits = Fewer networks, more hosts (Class A).
+        - The subtraction of 2 is always required for network and broadcast addresses.
+		

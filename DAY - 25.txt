@@ -1,0 +1,284 @@
+  - What is Inter-VLAN Routing (IVR)?
+    - IVR = Inter-VLAN Routing
+    - It allows communication between different VLANs inside a Layer 3 switch or through a router.
+      - Without IVR — VLANs are isolated. Devices in VLAN 10 cannot talk to devices in VLAN 20.
+      - With IVR — Devices in VLAN 10 can communicate with VLAN 20 (via Routing).
+	  
+  - Why do we need IVR (Inter-VLAN Routing)?
+    - VLANs separate devices for security, traffic management, or organization.
+    - But sometimes different VLANs need to communicate (e.g., a user in the HR VLAN needs access to the finance server in the Finance VLAN).
+    - To allow controlled communication between VLANs, we need routing — that's why IVR is required!
+	
+  - How IVR Works:
+    - There are two ways to perform Inter-VLAN Routing:
+    1. 	 (Traditional method)
+       - Use a router with a single physical interface configured as sub-interfaces.
+       - Each sub-interface is assigned an IP address for a VLAN.
+       - The switch port connected to the router is configured as a trunk port.
+    - Example Setup:
+       #Switch <---trunk---> Router (with sub-interfaces)
+	   
+	2. Layer 3 Switch (Modern method)
+    - If you have a Layer 3 Switch (e.g., Cisco 3560, 3750), the switch itself can do routing!
+    - You create SVIs (Switch Virtual Interfaces) — basically VLAN interfaces with IP addresses.
+    - Example Setup:
+      Layer 3 Switch:
+      - VLAN10 Interface: 192.168.10.1
+      - VLAN20 Interface: 192.168.20.1
+      - VLAN30 Interface: 192.168.30.1
+    - The switch will route between VLANs internally.
+      - Faster
+      - No need for external routers
+      - Common in Enterprise Networks
+	  
+    - Summary:
+      Term	     Meaning
+      IVR	     Inter-VLAN Routing
+      Purpose	 Allow communication between different VLANs
+      Methods	 Router-on-a-Stick (Router + Trunk) or Layer 3 Switch (SVI)
+      Why	     VLANs are isolated by design, IVR allows controlled communication
+	  
+	- Important Points:
+      - Without IP routing enabled, Layer 3 Switch cannot route between VLANs.
+      - In Router-on-a-Stick, sub-interfaces must be created for each VLAN.
+      - Each VLAN must have a default gateway (IP address of VLAN interface).
+	  
+  - Practical of VLAN 
+  - IVR Scenario:
+    We have:
+    - VLAN 10 = Sales Department
+    - VLAN 20 = HR Department
+    - Each VLAN must communicate with each other.
+    - Devices need to access each other across VLANs.
+	
+  - LAB 1: Router-on-a-Stick (Traditional IVR using Router)
+    - Topology:
+       PC1 (VLAN 10) ---- Switch ---- Router ---- Switch ---- PC2 (VLAN 20)
+    - Requirements:
+      - Configure VLANs on the switch.
+      - Configure trunk port between switch and router.
+      - Create sub-interfaces on the router.
+	  
+	- Step-by-Step Configuration:
+      1. Switch Configuration
+         #Switch> enable
+         #Switch# configure terminal
+
+         ! Create VLANs
+         #Switch(config)# vlan 10
+         #Switch(config-vlan)# name SALES
+         #Switch(config)# vlan 20
+         #Switch(config-vlan)# name HR
+
+         ! Assign ports to VLANs
+         #Switch(config)# interface fastethernet0/1
+         #Switch(config-if)# switchport mode access
+         #Switch(config-if)# switchport access vlan 10
+
+         #Switch(config)# interface fastethernet0/2
+         #Switch(config-if)# switchport mode access
+         #Switch(config-if)# switchport access vlan 20
+
+         ! Configure trunk port to router
+         #Switch(config)# interface fastethernet0/24
+         #Switch(config-if)# switchport mode trunk
+		 
+	  2. Router Configuration (Router-on-a-Stick)
+         #Router> enable
+         #Router# configure terminal
+
+         ! Create sub-interfaces
+         #Router(config)# interface gigabitethernet0/0.10
+         #Router(config-subif)# encapsulation dot1Q 10
+         #Router(config-subif)# ip address 192.168.10.1 255.255.255.0
+
+         #Router(config)# interface gigabitethernet0/0.20
+         #Router(config-subif)# encapsulation dot1Q 20
+         #Router(config-subif)# ip address 192.168.20.1 255.255.255.0
+         - Now, PCs in VLAN 10 and VLAN 20 can talk to each other via the router!
+		 
+  - LAB 2: Layer 3 Switch (Modern IVR using Switch only)
+    - Topology:
+        PC1 (VLAN 10) ---- Layer 3 Switch ---- PC2 (VLAN 20)
+    - Requirements:
+      - Configure VLANs
+      - Create Switch Virtual Interfaces (SVIs)
+      - Enable routing on the switch
+	  
+	- Step-by-Step Configuration:
+      1. Switch Configuration
+         #Switch> enable
+         #Switch# configure terminal
+
+         ! Create VLANs
+         #Switch(config)# vlan 10
+         #Switch(config-vlan)# name SALES
+         #Switch(config)# vlan 20
+         #Switch(config-vlan)# name HR
+
+         ! Assign ports to VLANs
+         #Switch(config)# interface fastethernet0/1
+         #Switch(config-if)# switchport mode access
+         #Switch(config-if)# switchport access vlan 10
+
+         #Switch(config)# interface fastethernet0/2
+         #Switch(config-if)# switchport mode access
+         #Switch(config-if)# switchport access vlan 20
+
+         ! Create SVIs
+         #Switch(config)# interface vlan 10
+         #Switch(config-if)# ip address 192.168.10.1 255.255.255.0
+         #Switch(config-if)# no shutdown
+
+         #Switch(config)# interface vlan 20
+         #Switch(config-if)# ip address 192.168.20.1 255.255.255.0
+         #Switch(config-if)# no shutdown
+
+         ! Enable Routing
+         #Switch(config)#  
+		 - Now, Layer 3 Switch will route between VLAN 10 and VLAN 20 internally, no router needed!
+		 
+  - Comparison Summary:
+    Feature	           Router-on-a-Stick	           Layer 3 Switch
+    Device Needed	   Router + Switch	               Layer 3 Switch
+    Performance	       Slower (Router limits speed)	   Faster (Switching Hardware)
+    Scalability	       Limited by Router Interface	   Highly scalable
+    Configuration	   Needs sub-interfaces	           Uses SVIs and internal routing
+    Modern Use	       Rarely used	                   Common
+
+------------------------------------------------------------------------------------------------------------------------------
+
+
+Port Security :- Port security is a Cisco switch feature that restricts a port's traffic by limiting the MAC addresses allowed to connect to it. It prevents unauthorized devices from accessing the network by restricting the number of MAC addresses, enabling "sticky" MAC learning, or setting violation modes (shutdown, restrict, protect) to handle unauthorized devices.
+
+
+- Key Components of Port Security
+  
+  - Maximum MAC Addresses: Defines how many devices can connect to a single port (default is 1).
+  
+  - Static/Sticky MAC Addresses: You can manually define allowed MAC addresses or use switchport port-security mac-address sticky to have the switch learn the currently connected device's address.
+  
+  - Violation Modes:
+    - Shutdown: (Default) Puts the port into err-disable state, disabling it.
+    - Restrict: Drops packets from unauthorized addresses, logs the violation, and increases the violation counter.
+    - Protect: Drops packets from unauthorized addresses but does not log the violation. 
+	
+- How to Configure Port Security (Cisco CLI)
+  - Port security must be configured on an access port.
+
+- Enter global configuration mode
+Switch# configure terminal
+Switch(config)# interface fastethernet 0/1
+
+- 1. Set the port mode to Access
+Switch(config-if)# switchport mode access
+
+- 2. Enable Port Security
+Switch(config-if)# switchport port-security
+
+- 3. (Optional) Set maximum allowed MAC addresses (e.g., 2)
+Switch(config-if)# switchport port-security maximum 2
+
+- 4. (Optional) Configure sticky MAC address learning
+Switch(config-if)# switchport port-security mac-address sticky
+
+- 5. (Optional) Set violation mode
+Switch(config-if)# switchport port-security violation shutdown
+
+- 6. Exit and save configuration
+Switch(config-if)# end
+Switch# copy running-config startup-config
+
+
+- Verification Commands
+  #show port-security: Displays a summary of all secure ports.
+  #show port-security interface [interface-id]: Shows detailed configuration for a specific port.
+  #show port-security address: Shows all secure MAC addresses learned. 
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+EtherChannel :- EtherChannel is a port aggregation technology that bundles multiple physical Ethernet links (up to 16, with 8 active) into a single logical link, providing increased bandwidth, redundancy, and load balancing between switches, routers, or servers. It works by treating these combined links as one, preventing Spanning Tree Protocol (STP) from blocking them while distributing traffic across active paths. 
+ 
+  - This logical link is often called a Port Channel.
+
+- What is EtherChannel :- Instead of using one cable between two switches, you can combine (for example) 4 cables into one logical 
+                          connection.
+  
+  - All links act as one
+  - Traffic is distributed across them
+  - If one link fails, others continue working
+
+ - How EtherChannel Works
+   
+   - Logical Bundling: Individual physical ports are grouped into a "port-channel" interface.
+
+   - Load Balancing: Traffic is distributed across physical links based on Source/Destination MAC or IP addresses, preventing bottlenecks.
+ 
+   - Redundancy: If one physical link fails, traffic immediately moves to the remaining functional links without downtime.
+   
+   - Traffic is distributed based on:
+     - Source MAC
+     - Destination MAC
+     - IP address
+     - TCP/UDP port (depending on configuration)
+	 
+   - Example:
+     4 links × 1 Gbps = up to 4 Gbps aggregated bandwidth
+
+   - Protocol Negotiation: Uses protocols to manage the link:
+
+     - LACP (Link Aggregation Control Protocol): IEEE 802.3ad standard; creates, manages, and monitors the bundle, identifying compatible ports.
+
+     - PAgP (Port Aggregation Protocol): Cisco proprietary; automatically manages EtherChannel creation.
+
+     - Static (On): No protocol; forces links to act as a channel without negotiation.
+	 
+	 - There are two main negotiation protocols:
+       - PAgP (Port Aggregation Protocol) – Cisco proprietary
+       - LACP (Link Aggregation Control Protocol) – IEEE standard (802.3ad)
+
+       - Modes:
+         - on → Force EtherChannel (no negotiation)
+         - active → LACP actively negotiates
+         - passive → LACP waits
+         - desirable/auto → PAgP modes
+		 
+	- Why We Use EtherChannel
+
+     - Here’s the practical value:
+       1. Increased Bandwidth
+
+     - Multiple links = higher throughput
+       2. Redundancy (High Availability)
+
+     - If one cable fails, traffic continues
+       3. Load Balancing
+
+     - Traffic is distributed across links
+       4. Avoids STP Blocking
+
+     - Normally, Spanning Tree Protocol (STP) blocks redundant links
+     - But EtherChannel makes them appear as one → no blocking
+	 
+- How to Configure EtherChannel (Cisco IOS)
+  - Before configuring, ensure all participating interfaces have identical settings (speed, duplex, VLAN configuration/trunk mode). 
+
+  - Steps to configure LACP EtherChannel (Recommended):
+   
+   1. Enter interface range mode:
+      #Switch(config)# interface range fa0/1 - 2
+
+   2. Configure as a trunk (if necessary) and create the channel group with LACP:
+      #Switch(config-if-range)# switchport mode trunk
+      #Switch(config-if-range)# channel-group 1 mode active
+      - Note: Use mode active for LACP negotiation, or mode on for static. "Active" is recommended.
+	  
+   3. Verify the configuration:
+      #Switch# show etherchannel summary
+	  
+- Key Guidelines
+  1. Active Links: Only up to 8 active links are permitted, though up to 16 can be configured (with 8 as standby).
+  2. Compatibility: All ports must have the same speed, duplex, and VLAN settings.
+  3. Configuration Changes: Apply changes to the port-channel interface, not the individual physical interfaces, to ensure consistency

@@ -1,0 +1,423 @@
+STP (Spanning Tree Protocol)
+
+  - Why STP is required 
+    - we need redundancy, but there will be a broadcast message!
+	
+  - Redundancy Topology 
+   - To Eliminate single point of failure, backup link are used.
+   - This type of network is calles as a redundant topology.
+   
+  - Problem in Redundant Topologies
+   - In a switched network, loops can easily form if there are redundant links (which are often intentionally created for redundancy/failover).
+   - Without STP:
+     - Broadcast Storms occur (frames keep looping endlessly).
+     - MAC table instability (switches keep updating the MAC table incorrectly).
+     - Multiple Frame Copies (duplicate frames flood the network).
+     - Result: Network becomes very slow, or completely crashes.
+   - The above problem are collectively called as layer 2 switching loops.
+   
+  - Purpose/Use of STP:
+    Purpose	                 Explanation
+    Prevent loops	         STP blocks certain ports intelligently to break loops.
+    Redundancy support	     If a link fails, STP recalculates and reactivates a backup path.
+    Stabilize network	     It keeps the switching environment efficient and organized.
+    Avoid broadcast storms	 Stops infinite frame flooding in the LAN.
+	
+  
+  - What is STP (Spanning Tree Protocol)?
+    - STP (Spanning Tree Protocol) is a Layer 2 protocol used in switching networks to prevent loops.
+      - Full Form: Spanning Tree Protocol
+	  - Spanning-tree protocol is used in switched network to avoid switching loops or L2 loops
+      - STP is open standard Defined by: IEEE 802.1D Standard
+	  - It block all the redundant paths and provides a loop free L2 path 
+	  - It elect a Root Bridge which become refrence point to build loop free topology 
+	  - It uses BPDU for communication between switches.
+	  - Enable by default on all Cisco Switches.
+	  
+  - How STP Works (Basic Idea):
+    - STP uses an election and decision process to create a Loop-Free Logical Topology:
+      1. Elect a Root Bridge (Master switch that acts as a reference point).
+	  2. BPDU are exchanged between all the switches to elect Root bridge.
+	  3. BPDU contain information that helps the switch to determine the topology.
+	  4. BPDU are sent every 2 sec.
+      2. Calculate the Best Path to the Root Bridge (using path cost).
+      3. Designate Ports:
+         - Root Port (Best path toward root)
+         - Designated Port (Best path on a segment)
+         - Blocked Port (Ports that are turned off to prevent loops)
+    - Blocked ports are not forwarding traffic but are ready to reactivate if needed!
+	
+  - Election in STP:
+    - Switch with the lowest Bridge ID (Priority + MAC Address) becomes Root Bridge.
+	- The winner must be: 1-Lowest Priority, 2-Lowest MAC Address
+	- Other switches connects to Root Bridge through the best path cost(Lowest)
+	- Select Lowest sender's bridge ID 
+	- Select Lowest sender's Port ID
+    - Default Priority = 32768. (Lower is better).
+	
+  - Bridge ID :- 
+    - Each switch has a unique identifier called a bridge id or switch id 
+	- Bridge ID = Priority  | Mac Address 
+	- Extended Bridge ID = Priority + VLAN | Mac Address 
+	- Default Priority is 32768
+	- The Winner must be :- 1-Lowest Priority, 2-Lowest Mac Address
+	
+  - What is Priority in STP?
+    - Priority in STP is a numerical value used by switches during the Root Bridge election process.
+    - It helps STP decide which switch will become the Root Bridge.
+    - Important:
+      - Lower priority value = Higher chance of becoming the Root Bridge.
+      - If priority is same, lowest MAC address is used to decide.
+	  
+  - Why is Priority Important in STP?
+    - To control and influence which switch becomes the Root Bridge (instead of leaving it to random election).
+    - You want the most powerful, central, or best positioned switch to be the Root Bridge for efficient network performance.
+	
+  - Priority Value Details:
+    Item	                 Detail
+    Default Priority	     32768
+    Range	                 0 to 61440
+    Step/Increment	         4096
+    Lowest Value (Best)	     0
+    Highest Value (Worst)	 61440
+	
+  - How to Change Priority in Cisco Switch?
+    - CLI Command:
+      #Switch(config)# spanning-tree vlan <vlan_id> priority <value>
+    - Example:
+      #Switch(config)# spanning-tree vlan 10 priority 4096
+      - This will push this switch to be more likely the Root Bridge for VLAN 10.
+	  
+  - Port State in STP (DP(Designated Port) Port, RP(Root Port), Alternative Port Election)
+    - After that Port roles and states will happen:
+	  - Designated Port :- Forwarding State (It always send the BPDU)
+	  - Root Port : Forwarding State (It always receive the BPDU)
+	  - Alternative Port : Blocking State 
+	  
+	- Designated Port 
+	  - All port on the root bridge 
+	  - Port on a non-root bridge that has the lowest cost to the root
+	  - A designated port will always be in Forward mode 
+	  
+	- Root Port
+	  - A Root Port (RP) is the port on a non-root switch that has the best (lowest-cost) path to the Root Bridge.
+      - Every switch (except the Root Bridge itself) must have exactly one Root Port.
+      - Root Ports are used to forward traffic toward the Root Bridge.
+	  - How is the Root Port (RP) Elected?
+	    - When a switch receives Bridge Protocol Data Units (BPDUs) from different ports, it uses the following rules to elect the Root Port:
+        1. Lowest Path Cost
+           - The switch calculates the total cost from itself to the Root Bridge through each port.
+           - The port with the lowest total cost becomes the Root Port.
+        2. If Path Costs are Equal (tie-breaker needed):
+           - Choose the port connected to the neighbor switch with the lowest Bridge ID.
+		   
+           - Bridge ID = Bridge Priority + MAC Address.
+        3. If Bridge IDs are also equal:
+           - Choose the port with the lowest Port ID (lowest port number).
+    
+	- Important Points about Root Port:
+      - Only one Root Port per switch (except the Root Bridge which has no Root Port).
+      - Root Port forwards traffic toward the Root Bridge.
+      - Root Bridge itself does not have any Root Port (because it is the root).
+		
+	- Non Designated Port 
+	    - All ports which are blocked by STP.
+		
+	- What is STP Path Cost?
+      - STP Path Cost = Cumulative "cost" of links from a switch toward the Root Bridge.
+      - Lower cost = Better path.
+      - Each link speed (bandwidth) has a default cost value.
+      - STP adds up the costs of all links along a path to the Root.
+      - The switch chooses the path with the lowest total cost to reach the Root Bridge.
+	  
+	- Default STP Cost Values (based on Link Speed)
+      Link Speed	                   STP Cost (Standard 802.1D)
+      10 Mbps (Ethernet)	           100
+      100 Mbps (Fast Ethernet)	       19
+      1 Gbps (Gigabit Ethernet)	       4
+      10 Gbps (10 Gigabit Ethernet)	   2
+      - Higher bandwidth = Lower cost! (Faster links are preferred!)
+	  
+	- If Costs are Equal, Then What?
+      - If two paths have the same total cost, STP breaks the tie by:
+        1. Lowest Bridge ID (Root Bridge MAC Address).
+        2. Lowest Port ID (Priority + Port Number).
+		
+  - STP Port States : In STP (IEEE 802.1D), ports transition through several states to make sure there are no loops in the network.
+   - There are 5 Port States:
+     1. Disable State         (Administratively shut down port.)
+	 2. Blocking State        (Listening for BPDUs but not forwarding data.)
+	 3. Listening State       (Preparing to participate, no frame forwarding yet.)
+	 4. Learning State        (Starts learning MAC addresses, still not forwarding frames.)
+	 5. Forwarding State      (Fully active, forwarding frames and learning MACs.)
+	
+   1. Disabled State
+    - Meaning:
+      - The port is administratively down (by shutdown command).
+      - Port does not participate in STP at all (no BPDUs sent or received).
+    - What Happens:
+      - Port is OFF, no frames passed, no BPDU received or sent.
+    - Example:
+      - If a port is manually disabled by an administrator (shutdown command in Cisco switch).
+    - Memory Tip: "Disabled = Off completely."
+	  
+   2. Blocking State
+    - Meaning:
+      - Port is UP, but it is blocking user traffic.
+      - Port only listens to BPDUs.
+    - Why Blocking:
+      - To prevent loops immediately after link comes up.
+    - What Happens:
+      - No MAC address learning.
+      - No frame forwarding.
+      - Listening for BPDUs to understand network topology.
+    - Timer:
+      - Lasts 20 seconds (default Max Age timer).
+    - Memory Tip: "Blocking = Just watching, no touching the frames."
+	  
+   3. Listening State
+    - Meaning:
+      - The port is actively listening to BPDUs and deciding if it can participate in forwarding.
+    - What Happens:
+      - No data frame forwarding yet.
+      - No MAC address learning.
+      - Port starts sending and receiving BPDUs.
+    - Purpose:
+      - To ensure no loops are introduced before starting to forward frames.
+    - Timer:
+      - Lasts 15 seconds (default Forward Delay timer).
+    - Memory Tip: "Listening = Deciding role, but still not carrying traffic."
+	  
+   4. Learning State
+    - Meaning:
+      - Port learns MAC addresses by examining incoming frames but still not forwarding normal data.
+    - What Happens:
+      - MAC addresses are added to the MAC address table.
+      - No user data is forwarded.
+    - Timer:
+      - Lasts 15 seconds (default Forward Delay timer).
+    - Memory Tip: "Learning = Building the address book but not delivering yet."
+	  
+   5. Forwarding State
+    - Meaning:
+      - Port is fully active: Learning MAC addresses + Forwarding user traffic.
+    - What Happens:
+      - MAC address learning.
+      - Data frame forwarding.
+      - Sending/receiving BPDUs.
+    - This is the final and fully operational state.
+    - Memory Tip: "Forwarding = Fully functional, frames flowing."
+	
+	- Flow of Port States in STP
+      - Normally when a port is enabled:
+         Disabled → Blocking → Listening → Learning → Forwarding
+      - (If there’s a loop detected, port may stay in Blocking.)
+	
+	- The entire process of election takes (30-50) Seconds 
+	  MAX Age = 20 + (Forwarding Delye = 15) + (Learning Delay = 15) = 50 Seconds 
+	
+  - STP Timers - Full Explanation
+    - In Spanning Tree Protocol (STP), timers control how quickly a switch can detect topology changes and how fast it can respond to link failures or changes.
+    - There are three major timers in classic STP (IEEE 802.1D):
+ 	  Timer Name	         Default Value	         Purpose
+      Hello Time	         2 seconds	             How often BPDUs are sent
+      Max Age Time	         20 seconds	             How long to wait for BPDU before considering a path dead
+      Forward Delay Time	 15 seconds	             Time spent in Listening and Learning states
+	  
+	1. Hello Time
+     - What is it?
+       - Hello Time defines how often the Root Bridge sends out Hello BPDU packets to inform other switches about its presence and the network topology.
+     - Default value?
+       - 2 seconds.
+     - Why is it important?
+       - Keeps the network updated about the Root Bridge.
+       - Makes sure that all switches are actively hearing from the Root.
+       - If switches stop receiving Hello messages, they start recalculating STP.
+     - Example:
+       - Root Bridge sends a Hello BPDU every 2 seconds on all active ports.
+     - Memory Tip: "Hello Time = Root sending 'I'm alive!' messages."
+	 
+	2. Max Age Time
+     - What is it?
+	   - How long to keep port in the bloking state before listening.
+       - Max Age defines how long a switch should wait without hearing a Hello BPDU before assuming that the Root Bridge or link has failed.
+     - Default value?
+       - 20 seconds.
+     - Why is it important?
+       - Prevents switches from reacting too fast to temporary BPDU losses.
+       - Gives the network time to detect real topology changes (like cable unplugging or switch failure).
+     - Example:
+       - If a switch does not receive a BPDU on a port for 20 seconds, it declares the path dead and starts STP recalculation.
+     - Memory Tip: "Max Age = How patient the switch is before declaring a problem."
+	 
+	3. Forward Delay Time
+     - What is it?
+       - Forward Delay defines how long a port stays in the Listening and Learning states before moving to Forwarding.
+     - Default value?
+       - 15 seconds in Listening state + 15 seconds in Learning state = 30 seconds total delay before Forwarding.
+     - Why is it important?
+       - Prevents loops by allowing enough time for the network to learn about the change before actually forwarding frames.
+       - Ensures that old or incorrect MAC address information is flushed.
+     - Example:
+       - When a port comes up, it waits 15 seconds in Listening, 15 seconds in Learning, then moves to Forwarding state.
+     - Memory Tip: "Forward Delay = Safety period before letting traffic flow."
+	 
+	- Relation Between Timers
+      - Hello Time is usually much smaller compared to Max Age.
+      - Max Age is generally 10 times Hello Time (default settings).
+      - Forward Delay ensures no loops before forwarding user traffic
+	  
+	- Summary of Default STP Timers
+      Timer	           Default	      Description
+      Hello Time 	   2 seconds	  Send BPDUs
+      Max Age	       20 seconds	  Wait time before considering path dead
+      Forward Delay	   15 seconds	  Time spent in Listening and Learning
+	  
+	- Relation Between Timers
+      - Hello Time is usually much smaller compared to Max Age.
+      - Max Age is generally 10 times Hello Time (default settings).
+      - Forward Delay ensures no loops before forwarding user traffic.
+
+Practical of STP.
+
+   #Show Spanning-tree 
+   - Root ID :- Root ID is root bridge ID and
+   - Bridge ID :- Bridge ID is self switch ID.
+   #show version (check switch mac address)
+   (Config)#spanning-tree vlan 1 priority 5 (Change the Priority) 
+   #show spanning-tree (check list and lrn port state)
+   
+   
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Configure Telnet on Cisco Switch (Layer 2, Layer 3)
+
+  - What is Telnet?
+    - Telnet allows you to remotely access and manage the switch via command line over the network.
+    - Port Number: 23 (TCP).
+    - Telnet is not secure (data is sent in plain text).
+    - It's mainly used in lab environments or internal trusted networks.
+   
+  - Requirements before Telnet Configuration
+   - You must configure:
+     - IP address on the switch (SVI - Switch Virtual Interface).
+     - Default gateway (if accessing from a different network).
+     - Enable Password (for privileged mode).
+     - Console password and VTY (Virtual Terminal) password.
+  
+  - Step-by-Step: Telnet Configuration on Cisco Layer 2 Switch
+    1. Assign IP address to the Switch
+     - Since it's a Layer 2 switch, we give IP address on VLAN 1 (or any SVI):
+       #Switch> enable
+       #Switch# configure terminal
+       #Switch(config)#an 1 interface vl
+       #Switch(config-if)# ip address 192.168.1.10 255.255.255.0
+       #Switch(config-if)# no shutdown
+       #Switch(config-if)# exit
+     - This IP address will be used for remote Telnet access.
+	 
+    2. Set VTY Password (for Telnet access)
+       #Switch(config)# line vty 0 15
+       #Switch(config-line)# password cisco
+       #Switch(config-line)# login
+       #Switch(config-line)# exit
+     - Telnet (VTY lines) access secured with password.
+	 
+	3. Set Enable Password (for privileged EXEC mode)
+       #Switch(config)# enable password cisco123
+     - Protects privileged EXEC mode (Switch#).
+       (Optional: You can use enable secret instead of enable password for more security.)
+	   
+	- Now Telnet is Configured!
+      - You can now access the switch remotely:
+        telnet 192.168.1.10
+      - You will be asked for the VTY password first (cisco), and then after entering, if you want privileged access (Switch#), you must type:
+        #enable
+        - and enter the enable password (cisco123).
+		
+  - Configure Telnet on Layer 3 :- 
+    - Telnet configuration on a Layer 3 switch is very similar to a Layer 2 switch.
+    - The main difference is that a Layer 3 switch can route between VLANs and have multiple SVIs (Switch Virtual Interfaces), not just VLAN 1.
+	
+	1. Assign an IP Address
+     - You have two options:
+       - Assign IP on a SVI (interface vlan)
+         OR
+       - Assign IP on a physical port (if port is configured as Layer 3 port).
+       - Example 1: Configure an IP address on VLAN 1:
+         #Switch> enable
+         #Switch# configure terminal
+         #Switch(config)# interface vlan 1
+         #Switch(config-if)# ip address 192.168.10.10 255.255.255.0
+         #Switch(config-if)# no shutdown
+         #Switch(config-if)# exit
+       - Example 2: Configure IP address on a physical port (Layer 3 port):
+         #Switch(config)# interface gigabitEthernet 0/1
+         #Switch(config-if)# no switchport
+         #Switch(config-if)# ip address 192.168.10.10 255.255.255.0
+         #Switch(config-if)# no shutdown
+         #Switch(config-if)# exit
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+  - What is SSH and why configure SSH on a Layer 2 Switch?
+    - SSH (Secure Shell) is a secure protocol to remotely manage and control a device like a Cisco switch.
+    - It is encrypted, unlike Telnet (which sends everything in plain text).
+    - Even on a Layer 2 switch (which mainly switches frames), you still need SSH for secure management access!
+	
+  - How to Configure SSH on a Cisco Layer 2 Switch (Step-by-Step):
+  1. Set the hostname and domain name
+    - SSH requires both a hostname and domain name for the RSA key generation.
+      #Switch> enable
+      #Switch# configure terminal
+      #Switch(config)# hostname SW1
+      #SW1(config)# ip domain-name example.com
+	  
+  2. Generate the RSA encryption keys
+    - This will create the key pair required for SSH secure communication.
+      #SW1(config)# crypto key generate rsa
+      - It will ask for a key size.
+      - Best practice: use at least 1024 bits (Cisco recommends 2048 bits now for better security).
+    - Example:
+      - How many bits in the modulus [512]: 1024
+	  
+  3. Create a local user and password
+    - SSH uses username/password authentication (not just enable password like Telnet).
+      #SW1(config)# username admin password cisco123
+	  
+  4. Configure VTY lines for SSH access
+    - Tell the switch to only accept SSH (not Telnet) on the VTY (virtual terminal) lines.
+      #SW1(config)# line vty 0 4
+      #SW1(config-line)# login local
+      #SW1(config-line)# transport input ssh
+      #SW1(config-line)# exit
+    - login local — Switch will ask for a username and password
+    - transport input ssh — Only SSH will be allowed (no Telnet).
+	
+  5. (Optional) Set the SSH version
+    - Always use SSH version 2 (more secure than version 1).
+      #SW1(config)# ip ssh version 2
+	  
+  - Summary of Important Commands
+    Command	                             Purpose
+    hostname SW1	                     Sets device hostname
+    ip domain-name example.com	         Sets domain name
+    crypto key generate rsa	             Generates SSH keys
+    username admin password cisco123	 Creates local user
+    line vty 0 4	                     Enters VTY lines
+    login local	                         Forces login with local user
+    transport input ssh	                 Allows SSH only
+    ip ssh version 2	                 Enables SSHv2
+	
+  - How to Verify SSH Configuration
+    - To check SSH version:
+      #SW1# show ip ssh
+    - To check if VTY lines are ready:
+      #SW1# show running-config | section line vty
+    - To check SSH sessions:
+      #SW1# show ssh
+    - Test SSH connection (from another device):
+      #ssh -l admin 192.168.1.1
+      (admin is the username, 192.168.1.1 is the switch IP)	  

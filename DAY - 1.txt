@@ -1,0 +1,39 @@
+CCNA (Cisco Certified Network Associate)
+
+- EXAM Code (200-301 CCNA)
+
+Question :- What is CCNA, Why do you need to learn CCNA?
+Answer :- CCNA (Cisco Certified Network Associate) is an entry-level certification from Cisco that validates knowledge of networking fundamentals, including routing, switching, security, automation, and wireless networking.
+
+
+CCNA Certification Overview
+- Exam: 200-301 CCNA
+- Prerequisites: None (but basic networking knowledge is recommended)
+- Duration: 45 Days
+- Topics Covered:
+   - Networking Fundamentals: What is Network and Networking, Types of the Network, OSI model, TCP/IP, IPv4/IPv6 addressing, subnetting
+   - Routing & Switching: Configuration of the Router, RIP, EIGRP, OSPF, VLANs, STP, EtherChannel, IVR, Port Secuirty.
+   - Security Basics: Access Control Lists (ACLs), VPNs, security best practices
+   - Automation & Programmability: Python, APIs, SDN concepts
+   - Wireless Networking: WLAN concepts, controllers, and protocols
+   
+Why Get CCNA Certified?
+- Job Opportunities: Qualifies you for roles like Network Engineer, Network Administrator, and IT Support.
+- Industry Recognition: Cisco is a leading networking company, and the certification is respected worldwide.
+- Higher Salary Potential: Certified professionals often earn more than non-certified ones.
+- Foundation for Advanced Certifications: Prepares you for CCNP, CCIE, or security-focused tracks like CCNA Security.
+
+How to Prepare?
+1. Study Materials:
+   - Cisco’s Official Certification Guide
+   - Cisco Packet Tracer (for network simulations)
+   
+2. Practice Labs:
+   - Use Cisco Packet Tracer or GNS3 for hands-on experience.
+   - Set up a home lab with real Cisco devices (optional).
+   
+3. Take Practice Tests:
+   - Measure your progress with mock exams.
+   - Identify weak areas and focus your studies.
+   
+-----------------------------------  

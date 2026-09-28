@@ -1,0 +1,213 @@
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+ - How to recover password of Cisco Router :- If you’ve forgotten the password of a Cisco router, you can recover it without losing the configuration by using ROMMON mode (rom monitor mode). This method works on most Cisco routers.
+ 
+ Note :- Cisco Router Password Recovery Step-by-Step:
+       - You’ll need physical access to the router (via console cable).
+	   
+  - Step 1: Reboot the Router
+     - Connect console cable to your PC and open a terminal (like PuTTY or Tera Term).
+     - Restart (power cycle) the router.
+     - When the router starts booting, interrupt it during the first few seconds:
+       - Press Ctrl + Break or Ctrl + C (depends on model and terminal emulator).
+  
+  - Step 2: Enter ROMMON Mode
+     - You should now be at the rommon> prompt.
+	 
+  - Step 3: Change the Configuration Register
+     - At the rommon> prompt, type:
+        #confreg 0x2142
+     - This tells the router to ignore the startup configuration (where passwords are stored) on next reboot.
+     - Then, type:
+        #reset
+     - The router will now reboot and bypass the password.
+	 
+  - Step 4: Enter Privileged Mode Without a Password
+     - After reboot:
+       #Router>enable
+     - No password will be asked because it skipped the config.
+     - Now load the original config:
+       #Router#copy startup-config running-config
+     - This brings back your full configuration into running memory (including interfaces, routing, etc.).
+	 
+  - Step 5: Change the Password
+     - Now set a new password:
+       #Router#configure terminal
+       #Router(config)#enable secret NEW_PASSWORD
+       (Optional: update console or vty passwords if needed.)
+	   
+  - Step 6: Restore the Configuration Register
+     - Set the register back to normal so it loads the config automatically next time:
+       #Router(config)#config-register 0x2102
+       #Router(config)#end
+       #Router#write memory
+	   
+  - Step 7: Reload to Apply Everything
+       #Router#reload
+     - Now your router will boot normally with your new password.
+	 
+  - What is Configuration Register? :- The Configuration Register (confreg) in Cisco routers is a 16-bit hexadecimal value that determines how the router boots and behaves at startup. It's a very important part of router troubleshooting, upgrades, and password recovery.
+  
+  - The most commonly used values are:
+    Config Register	        Meaning
+    0x2102	                Default value – boot normally using startup-config from NVRAM
+    0x2142	                Ignore startup-config – used in password recovery
+
+  - Default Configuration Register
+    - Most Cisco routers use 0x2102 as the default value.
+    - It tells the router to:
+      - Use the startup config in NVRAM.
+      - Boot the Cisco IOS image from Flash.
+	  
+  - How to Check Current Config Register  
+    - In privileged EXEC mode:
+      #Router#show version
+    - Look for the line:
+      #Configuration register is 0x2102
+	  
+  - How to Change the Configuration Register
+    - Step-by-step:
+    1. Go to privileged mode:
+       #Router#configure terminal
+    2. Change the value (example to ignore startup-config for password recovery):
+       #Router(config)#config-register 0x2142
+    3. Exit and Save:
+       #Router(config)#end
+       #Router#write memory
+    4. Reload the router:
+       #Router#reload
+      - On next boot, the router will behave according to the new configuration register value.
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+ACL (Access Control List)
+
+- What is an ACL (Access Control List) in Cisco Routers?
+  - An ACL is a set of rules (like filters) applied on a router's interface that control the traffic based on IP address, port, or protocol.
+  - Think of it like a firewall rule on the router.
+  
+- Why Do We Use ACL?
+  - We use Access Control Lists to:
+    Purpose	                Example
+    Improve security	    Block external access to internal servers
+    Control traffic flow	Allow only certain hosts or networks
+    Filter packets	        Block ICMP/ping, HTTP, FTP, etc., on specific ports
+    Apply QoS policies	    Prioritize or restrict certain types of traffic
+    Traffic management	    Route or block traffic between departments or VLANs
+	
+- Types of ACL in Cisco:
+  ACL Type	       Description
+  Standard ACL	   Filters only source IP addresses
+  Extended ACL	   Filters source & destination IP, protocols, ports, etc.
+  Named ACL	       ACLs with custom names instead of numbers (easier to manage)
+  IPv6 ACL	       ACLs used for IPv6 traffic filtering
+  
+- Key Concepts:
+  Term	    Meaning
+  in	    Traffic entering the router interface
+  out	    Traffic leaving the router interface
+  deny	    Block traffic
+  permit	Allow traffic
+  any	    Matches any IP address
+  host	    Matches a specific IP address only
+  eq 80	    Matches port 80 (used in extended ACL for HTTP)
+  
+- Important ACL Rules
+  1. ACLs are processed top to bottom.
+  2. ACLs have an implicit deny all at the end (even if not shown).
+  3. Place standard ACLs close to the destination, and extended ACLs close to the source.
+  4. Apply ACLs in the correct direction (inbound or outbound).
+  
+- What is a Standard ACL?
+  - A Standard ACL is the simplest type of access control list in Cisco routers.
+  - It is used to permit or deny traffic based only on the source IP address.
+  - It does not check destination IP, port number, or protocol type.
+
+- Where Is Standard ACL Used?
+  - You can use Standard ACL to:
+  - Allow or block an entire network or specific IPs
+  - Restrict access to router resources
+  - Control access to the internet from internal LANs
+  
+- Characteristics of Standard ACL
+  Feature	         Detail
+  Matches on	     Source IP address only
+  Range of numbers	 1–99 (classic), 1300–1999 (expanded)
+  Traffic direction	 Can apply on inbound or outbound
+  Location	         Placed closest to the destination
+  
+- Syntax of Standard ACL
+  - Step 1: Define the ACL
+    #access-list 10 permit 192.168.1.0 0.0.0.255
+    or block:
+    #access-list 10 deny 192.168.2.100
+   - 10 is the ACL number.
+  
+  - Step 2: Apply the ACL to an Interface
+    #interface FastEthernet0/0
+     #ip access-group 10 in
+    - This tells the router to filter incoming traffic on interface FastEthernet0/0 using ACL 10.
+	
+- Standard ACL Example (Allow only one host)
+  #access-list 1 permit 192.168.10.5
+  #access-list 1 deny any
+  #interface GigabitEthernet0/0
+  #ip access-group 1 in
+  - Only 192.168.10.5 is allowed to enter through the interface; all others are blocked.
+  
+- Key Rules and Tips
+  - The router processes the ACL top-down, stopping at the first match.
+  - There's an implicit deny all at the end of every ACL.
+  - Always test before applying ACL in a production environment.
+  - Standard ACL is not ideal for complex filtering — use Extended ACL for more control.
+  
+
+- What is Extended ACL?
+  - An Extended ACL (Access Control List) is used to filter traffic based on multiple criteria, including:
+    - Source IP
+    - Destination IP
+    - Protocol (TCP, UDP, ICMP, etc.)
+    - Port numbers (e.g., HTTP, SSH, FTP)
+  - Unlike Standard ACL (which only checks the source IP), Extended ACL gives you granular control.
+
+ - Why Use Extended ACL?
+  - You can use Extended ACLs to:
+    - Allow/deny specific services (e.g., block FTP but allow HTTP)
+    - Block access between specific hosts or networks
+    - Control inbound or outbound traffic on a specific interface
+    - Enforce security policies or application filtering
+	
+- Where to Place Extended ACL?
+  - Close to the Source!
+  - Because Extended ACLs are more specific, you want to drop or allow traffic as early as possible to save bandwidth and CPU.
+   
+- Syntax of Extended ACL
+  - Number Range
+    100–199 (classic)
+    2000–2699 (expanded)
+
+- Configuration Example (Allow HTTP, Block FTP)
+ - Goal:
+  - Allow HTTP from 192.168.1.0/24 to 172.16.1.100
+  - Deny FTP from same network
+  - Permit everything else
+
+- Step 1: Define ACL
+  #access-list 110 permit tcp 192.168.1.0 0.0.0.255 host 172.16.1.100 eq 80
+  #access-list 110 deny tcp 192.168.1.0 0.0.0.255 host 172.16.1.100 eq 21
+  #access-list 110 permit ip any any
+
+- Step 2: Apply ACL to Interface
+  #interface GigabitEthernet0/1
+  #ip access-group 110 in
+  
+- Explanation of Keywords
+  Keyword	          Meaning
+  tcp	              Protocol to match
+  192.168.1.0	      Source network
+  0.0.0.255	          Wildcard mask (same as /24)
+  host 172.16.1.100	  Destination IP (specific host)
+  eq 80	              Match port 80 (HTTP)
+  deny	              Block matching traffic
+  permit ip any any	  Allow everything else (important!)

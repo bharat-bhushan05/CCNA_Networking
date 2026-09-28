@@ -1,0 +1,261 @@
+- What is Routing
+  - Routing is the process of selecting the best path for data to travel from one network to another. It allows devices on different networks to communicate with each other.
+  - Think of routing like GPS navigation—the router chooses the best “road” (path) to reach the destination network.
+
+  - Why Routing is Important:
+    - Without routing:
+      - Devices could only communicate within the same network.
+      - Data would not know how to reach external networks, like the internet or other LANs.
+	  
+	- What Does a Router Do?
+      - When a router receives a packet:
+      - It checks the destination IP address.
+      - It looks into the routing table to find the best match.
+      - It forwards the packet to the next hop (next router or final destination).
+	  - ex. When a packet reache the router interface, it looks up the destination address in the packet header and compare it with it's routing table information.The routing table which is stored in the RAM inform the router, through which outgoing interface it has to forward the packet.(Outgoing Interfce(Egress Interface)).
+
+    - Who Performs Routing?
+      - Routing is done by a Router (or Layer 3 devices like L3 switches).
+      - A Router:
+        - Connects two or more networks.
+        - Has multiple interfaces, each belonging to a different network.
+        - Uses routing tables to decide where to forward packets.
+
+    - To do this Router use 2 types of the protocol
+	 (i)  Routing Protocol 
+	 (ii) Routed Protocol 
+	 
+	- What is Routed and Routing protocol.
+	
+	(i) Routed Protocol :- Routed protocols are used to carry user data (like emails, web traffic, files) from one network to another.
+	   - A Routed Protocol is a network protocol that allows data (user traffic) to be sent from one network to another, using IP addressing.
+	   - It carries actual data from source to destination, across multiple routers/networks.
+       - In simple words:
+         - A routed protocol is the “package” that is being delivered, and it contains all the necessary addresses to reach its destination.
+         - These protocols have IP addressing that helps routers forward data.
+		 
+	- Key Characteristics of Routed Protocols:
+      Feature	                      Description
+      Used for data transfer	      Sends data packets across different networks
+      Requires IP addressing	      Must be able to assign network & host addresses
+      Forwarded by routers	          Routers use routing tables to move data
+      Layer 3 protocol	              Works on Network Layer of the OSI Model
+      Carries actual user data	      Like emails, websites, voice, video, etc.
+       
+	- Examples of Routed Protocols:
+      - IPv4    (Most commonly used Internet protocol (32-bit addressing))
+      - IPv6    (Next-gen IP with 128-bit addressing)
+      - AppleTalk (Used in Apple devices (old, now replaced by IP))
+      - IPX/SPX (Used in Novell NetWare networks (obsolete now))
+      - These are the protocols carried by the network.
+	  
+	  
+	- Example of Routed Protocol in Action (IPv4):
+     - Scenario:
+        - PC1 IP: 192.168.1.10
+        - PC2 IP: 192.168.2.10
+        - They are on different networks connected via a router.
+     - When PC1 sends data to PC2:
+       - The data is packaged with IPv4 headers (routed protocol).
+       - The packet includes:
+         - Source IP: 192.168.1.10
+         - Destination IP: 192.168.2.10
+       - The router reads the destination IP, checks the routing table, and forwards the packet to the correct next hop.
+     
+	 - Here, IPv4 is the routed protocol carrying the data.
+	 
+	- Why Routed Protocols Matter:
+     - Without routed protocols:
+       - You cannot send data across networks.
+       - Even if routers know paths (routing protocols), there’s nothing to send.
+     
+	 - That’s why we need:
+       - Routing Protocols (to find the best path)
+       - Routed Protocols (to actually carry the data)
+	   
+	
+	(ii) Routing Protocol :- A Routing Protocol is used by routers to exchange routing information with other routers and to automatically build and maintain routing tables.
+         - Routing protocols are used by routers to communicate with each other.
+         - They help routers learn about other networks and build the routing table automatically.
+		 
+	- Purpose of Routing Protocols:
+      - To discover remote networks.
+      - To maintain up-to-date routing tables.
+      - To select the best path to send data.
+      - To detect changes in the network (failures, new paths, etc.).
+	  
+	- Examples of Routing Protocols:
+      Type	                Protocol	         Description
+      Distance Vector	    RIP	                 Simple, slow, uses hop count (Routers share entire routing tables periodically. Uses hop count as metric.)
+      Link-State	        OSPF	             More advanced, uses link cost (Routers share information about directly connected links. Builds a full map of the network.)
+      Hybrid	            EIGRP	             Cisco proprietary, fast and efficient (Mix of both Distance Vector and Link-State features.)
+      Path Vector	        BGP	                 Used on the Internet between ISPs
+      - These protocols find and maintain the best paths between networks.
+	  - RIP (Routing Information Protocol)
+	  - IGRP (Interior Gateway Routing Protocol)
+	  - EIGRP (Enhanced Interior Gateway Routing Protocol)
+	  - OSPF (Open Shortest Path First)
+	  - BGP (Border Gateway Protocol)
+	  - IS-IS (Intermediate System to Intermediate System)
+
+    - Routing Table
+      - Contains routes to reach other networks.
+      - Built using routing protocols, static routes, and directly connected routes.
+      - Shows next hop IP address or interface to use.
+      - Example:
+        Destination        Next Hop           Interface
+        192.168.2.0        192.168.1.2        Serial0/0
+        0.0.0.0            192.168.1.1        FastEthernet0/0
+	  - So:
+        - Routing table = Shows paths to networks.
+        - Routed protocol = The actual data being sent (like IP).
+        - Routing protocol = The language routers speak to share routes.
+		
+		
+    - Simple Analogy:
+      - Routing Protocol = Google Maps (Finds best route)
+      - Routed Protocol = The actual car (Carries people/data)
+      - Routing Table = List of best routes (used by Google Maps app)
+	  
+------------------------------------------------------------------------------------------------------------------------------------------
+
+- How Many Routing ways in Router :- There are 3 types of routing methods:
+ (i)   Static Routing 
+ (ii)  Default Routing
+ (iii) Dynamic Routing
+ 
+  1. Static Routing
+    - Manually configured by the network admin
+    - Does not change automatically if the network changes
+    - Best for small or stable networks
+  - Pros:
+    - Simple, predictable
+    - No CPU usage for routing calculation
+    - More secure (no automatic updates)
+
+  - Cons:
+    - Time-consuming in large networks
+    - No automatic failover or path recalculation
+
+  - Example Command:
+    #Router(config)# ip route 192.168.2.0 255.255.255.0 10.0.0.2
+
+  2. Dynamic Routing
+    - Routers automatically exchange routing information
+    - Uses routing protocols like RIP, OSPF, EIGRP, BGP
+    - Ideal for medium to large, changing networks
+   
+   - Pros:
+    - Auto updates and adapts to network changes
+    - Scalable for large networks
+
+   - Cons:
+    - More complex to configure
+    - Uses more CPU and bandwidth
+
+   - Example Configuration:
+     Router(config)# router ospf 1
+     Router(config-router)# network 192.168.1.0 0.0.0.255 area 0
+	 
+  3. Default Routing
+    - Used when a router doesn't know how to reach a destination
+    - All unknown routes go to a single gateway
+ 
+   - Common in edge routers or small networks with only one path to the Internet.
+     - Example:
+       Router(config)# ip route 0.0.0.0 0.0.0.0 10.0.0.1
+      - This sends all unknown traffic to 10.0.0.1 (default gateway).
+	  
+   - Summary Table
+     Routing Type	       Configured By	   Adapts Automatically	     Best For
+     Static Routing	       Manually	           No	                     Small, secure networks
+     Dynamic Routing	   Automatically	   Yes	                     Medium/large networks
+     Default Routing	   Manually	           No	                     Edge/default gateway use
+	 
+   - Types of the Routing 
+     (i) IP Routing (Static Routing, Default Routing)
+	 (ii) Dynamic Routing (RIP, IGRP, EIGRP, OSPF, BGP, IS-IS)
+	 
+--------------------------------------------------------------------------------------------------------------
+
+1. Static Routing :- Static Routing is a method of routing where the network administrator manually configures routes in the router’s routing table.
+    - In simple words:
+       You tell the router exactly where to send the traffic for a specific network — no learning, no updates, no changes unless you do it yourself.
+	- If any link goes down, the router will not take an alternate path and the administrator has to change the path manually, So the CPU usage is minimum and the usage of the bandwidth is aslo minimum.
+	
+	- Why Do We Use Static Routing?
+      Reason	       Description
+      Simplicity	   Easy to configure for small networks
+      Control	       Full control over routing paths
+      Security	       No risk of routing table changes from malicious or misconfigured routers
+      No Overhead	   Doesn't consume bandwidth or CPU to exchange routing info
+      Backup Routes	   Often used as backup to dynamic routes (floating static routes)
+
+    - Now let's find how much directly and indirectly network for the router.
+	- Destination network should be known
+	- AD(Administrative Distance) value of the Static Routing
+	- Secure and fast
+    - How Static Routing Works:
+     - When you configure a static route, you’re telling the router:
+     - “Hey! To reach network X, send the traffic via interface Y or next-hop IP Z.”	
+	 
+	- Syntax of Static Route:
+	  #Router(config)# ip route [destination_network] [subnet_mask] [next_hop_ip OR exit_interface]
+	  
+	- Example 1:
+      - You have two routers:
+      - Router1 IP: 192.168.1.1
+      - Router2 IP: 192.168.2.1
+      - Both connected via interface 10.0.0.1 and 10.0.0.2
+      - Add a static route on Router1 to reach 192.168.2.0/24:
+	    #Router1(config)# ip route 192.168.2.0(Indirect Network) 255.255.255.0(Subent mask of indirect network) 10.0.0.2
+	  - This tells Router1: “To get to 192.168.2.0, send packets to 10.0.0.2.”
+	  
+	- Example 2: Using exit interface
+	  #Router(config)# ip route 192.168.2.0 255.255.255.0 Serial0/0
+	  
+	  
+	- Important:
+      If the next-hop or exit interface becomes unavailable, the static route won’t work. This is why it doesn’t adapt like dynamic routing.
+	  
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+2. Default Routing :- Default routing is a method where you configure the router allto send  traffic for unknown destinations to a specific next-hop router or gateway.
+    - Default routes will be used for unknown destination or for all the destination. when the destination is unknown, then default route is the solution.
+    - Think of it like this:
+       “If you don’t know where the destination is, send it to this exit.”
+	   
+	- Why Do We Use Default Routing?
+      Reason	                    Description
+      To handle unknown routes	    When router doesn’t have a specific route, it still needs to forward the packet somewhere.
+      For Internet traffic	        Used to send all unknown traffic towards the Internet gateway.
+      Simplicity	                Saves you from writing routes for every single destination.
+      Easy to configure	            Especially helpful for small networks or edge routers.
+
+    - Where is Default Routing Used?
+      Network Type	        Usage of Default Route
+	  Small Office LAN	    To send all traffic to one edge router
+      Edge Routers	        To route all external traffic to the ISP
+      Stub Networks	        A network with only one exit path (can’t route anywhere else)
+      - A stub network has just one way out. Perfect for default routes!
+
+    - How to Configure a Default Route
+      - Cisco Command Syntax:
+        Router(config)# ip route 0.0.0.0 0.0.0.0 [next-hop IP OR exit-interface]
+        - Example:
+          If your next-hop router’s IP is 192.168.1.1, then:
+          #Router(config)# ip route 0.0.0.0 0.0.0.0 192.168.1.1
+          Or if you want to use interface directly:
+          #Router(config)# ip route 0.0.0.0 0.0.0.0 GigabitEthernet0/0
+        - This tells the router:
+          “If I don’t know the destination, send it out this interface or to that IP.”
+		  
+	- Real-World Example:
+      - Let’s say you have a home router:
+      - You have devices in 192.168.0.x range
+      - Your router is connected to the Internet via ISP
+      - Your router doesn’t know IPs like 8.8.8.8 or 172.217.3.110 (Google). So it uses a default route:
+        #ip route 0.0.0.0 0.0.0.0 [ISP’s IP]
+      - All traffic not destined for local LAN is sent to the Internet.
+	  

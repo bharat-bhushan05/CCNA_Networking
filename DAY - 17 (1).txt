@@ -1,0 +1,301 @@
+OSPF (Open Shortest Part First) 
+
+  - What is OSPF(Open Shortest Part First)?
+    - OSPF (Open Shortest Path First) is:
+      - A Link-State Routing Protocol
+      - Interior Gateway Protocol (IGP) – used within an Autonomous System (AS)
+      - A classless protocol that supports VLSM and CIDR
+      - Uses cost (based on bandwidth) as its routing metric
+	  - Update are send through multicast IP Address 224.0.0.5 and 224.0.0.6
+	  - OSPF send incremental/Triggered updates.
+      - Port Number: 89
+      - Uses Dijkstra’s SPF(Shortest Path First) algorithm to calculate the best path
+	  - OSPF Hello Packets are send every 10 sec and Hold timer is 40 sec.
+	  - Administrative Distance (AD) value is 110.
+	  - Metric = cost = Reference Bandwidth / Interface Bandwidth (Default Reference Bandwidth = 100 Mbps, You can change it manually to support faster links like 1Gbps, 10Gbps, etc.) or (10 * 8 / Bandwidth in bps)
+	  - Load balancing via 4 equal cost path by default max up to 16 path can support (unequal cost load balancing not supported)
+	  - Unlimed Hop count.
+	  - Faster Convergence.
+	  - Hierarchical network design.
+	  - One area has to be designated as Area 0.
+	  - Area 0 is called the backbone area.
+	  - Maintains similar database on all the routers within an area.
+	  - Router ID is used to identify each router.  
+	  
+  - Key Features of OSPF:
+    Feature	                         Description
+    Link-State Protocol	             Builds a full map (LSDB) of the network topology using Link-State Advertisements
+    Fast Convergence	             Quickly adapts to changes in the network by recalculating best paths
+    Cost-based metric	             Chooses the best route based on bandwidth (lower cost = better path)
+    Support for VLSM/CIDR	         Fully classless; supports subnetting and summarization
+    Authentication support	         Can use plain-text or MD5 authentication
+    Multi-area support	             Supports hierarchical routing for scalability
+    Uses Dijkstra's SPF algorithm	 Builds SPF tree to determine shortest path to every destination
+    No hop count limitation	         Unlike RIP, there's no 15-hop limit
+	
+	
+  - What is Router ID in OSPF?
+    - Router ID is used to identify the router
+    - The Router ID (RID) is a 32-bit number (just like an IPv4 address) that uniquely identifies a router in an OSPF domain (or area).
+	- Think of it like a name tag for each router in the OSPF network.
+	- The highest IP assignd to an active physical interface is router ID.
+	
+  - How is Router ID Selected?
+    - OSPF automatically chooses the Router ID in this order:
+	1. Manually configured RID
+       #router ospf 1
+       #router-id 1.1.1.1
+	   
+	2. Highest IP address on a loopback interface
+      - (Loopbacks are preferred because they're always up.)
+    
+	3. Highest IP address on an active physical interface
+	
+	- If none are available, OSPF won’t start.
+	
+	- Important Notes:
+      - Once RID is chosen, it doesn't change until the OSPF process is restarted or the router is rebooted.
+      - After changing the RID manually, you must restart OSPF:
+        #Router# clear ip ospf process
+		
+	  - How to Check OSPF Router ID:
+        #Router# show ip ospf
+		
+
+  - OSPF Metric Calculation :- In OSPF, the metric is called Cost — it represents the "expense" or "distance" of sending packets across a particular route.
+      - Lower cost = better path
+      - Cost is used to determine the best path to a destination network
+	  - When building the routing table, OSPF adds the costs of all outgoing interfaces to reach a destination and picks the lowest total cost path.
+	  
+	- How Is OSPF Cost Calculated?
+    - Cost Formula:
+      - Cost = Reference Bandwidth / Interface Bandwidth
+      - Default Reference Bandwidth = 100 Mbps
+    - So, if you have an interface with:
+      Bandwidth	      Cost Formula	                         Resulting Cost
+      10 Mbps	      100 Mbps / 10 Mbps = 10	             10
+      100 Mbps	      100 Mbps / 100 Mbps = 1	             1
+      1 Gbps	      100 Mbps / 1000 Mbps = 0.1 → Rounded	 1
+      10 Gbps	      100 Mbps / 10,000 Mbps = 0.01 → 1	     1
+      - Notice: Anything ≥100 Mbps will have cost 1 by default — not accurate for modern networks.
+	  
+  - How to Fix Cost Calculation for High-Speed Links?
+   - Update the Reference Bandwidth:
+    - Use this command under OSPF router config mode:
+      #Router(config-router)# auto-cost reference-bandwidth 10000
+    - This sets the reference bandwidth to 10 Gbps, making the cost values more meaningful:
+      Bandwidth	    New Cost (Ref = 10,000 Mbps)
+      10 Mbps	    10000 / 10 = 1000
+      100 Mbps	    10000 / 100 = 100
+      1 Gbps	    10000 / 1000 = 10
+      10 Gbps	    10000 / 10000 = 1
+	  
+	
+  - How OSPF Works:
+    1. Neighbor Discovery
+      - Routers send Hello packets on OSPF-enabled interfaces.
+      - If both routers agree on parameters (e.g., timers, area ID), they form a neighbor relationship.
+
+    2. Database Exchange
+      - Routers exchange LSAs (Link-State Advertisements) to learn about each other’s networks.
+      - All routers maintain an identical Link-State Database (LSDB) per area.
+
+    3. SPF Calculation
+      - Each router uses Dijkstra's algorithm to build the shortest-path tree.
+      - From the SPF tree, the router builds the routing table.
+	  
+  - OSPF Packet Types (Total 5):
+    Packet Type	        Name                          Description
+    1                   Hello	                      Discover neighbors and maintain relationships or adjacency
+    2                   DBD (Database Description)	  Exchange summaries of LSDBs
+    3                   LSR (Link State Request)	  Ask for specific LSAs from neighbors
+    4                   LSU (Update)	              Send full LSA details to neighbors
+    5                   LSAck	                      Acknowledge receipt of LSAs
+	
+  1. Hello Packet
+    - Used for: Discovering neighbors and maintaining adjacency
+    - Sent periodically to OSPF-enabled interfaces
+    - Helps in forming neighbor relationships
+    - Contains info like:
+      - Router ID
+      - Hello/dead intervals
+      - Area ID
+      - Router priority
+      - DR/BDR info
+    - Important: If two routers’ Hello packets don’t match in key parameters (like Area ID or Hello timer), they won’t become neighbors.
+	
+  2. Database Description Packet (DBD or DD)
+    - Used for: Summarizing the contents of the OSPF LSDB (Link State Database)
+    - Sent after adjacency is formed
+    - Contains headers of LSAs (not full info), so routers can compare what LSAs they are missing
+    - Think of this as routers saying, “Hey, here’s a list of what I know — tell me what you’re missing.”
+  
+  3. Link-State Request Packet (LSR)
+    - Used for: Requesting specific LSA(s) from a neighbor
+    - Sent after receiving a DBD packet when a router notices it doesn’t have a particular LSA
+    - Example: “Hey, I see you have LSA X, can you send it to me?”
+	
+  4. Link-State Update Packet (LSU)
+    - Used for: Sending full LSA information
+    - Can contain multiple LSAs
+    - Sent in response to LSR or when topology changes
+    - Example: “Here’s the full LSA you asked for, or here's an updated route.”
+	
+  5. Link-State Acknowledgment (LSAck)
+    - Used for: Acknowledging the receipt of LSU packets
+    - Ensures reliable delivery of LSAs
+    - Each LSA must be acknowledged to avoid retransmission
+    - Like saying: “Thanks! Got it.” 
+  
+  - OSPF Table Types:
+    Table Name	             Description                                           Purpose
+    Neighbor Table	         Lists all directly connected OSPF neighbors           For building adjacency
+    Topology Table (LSDB)	 AsHolds the full network topology learned via LS      For calculating best paths using SFP algorithm
+    Routing Table	         Best paths calculated from SPF tree                   For actual forwarding of data packets
+	
+	1. Neighbor Table
+    - What it contains:
+      - List of directly connected OSPF-speaking routers.
+    - How it's built:
+      - From Hello packets exchanged on OSPF-enabled interfaces.
+    - Fields include:
+      - Neighbor Router ID
+      - Interface connected
+      - DR/BDR info
+      - State (e.g., Init, 2-Way, Full)
+    - Purpose:
+      - To manage OSPF neighbor relationships and form adjacencies.
+    - Without this table, routers can’t communicate to exchange LSAs.
+	#show ip ospf neighbor 
+	
+	2. Topology Table (LSDB – Link-State Database) or Database Table
+    - What it contains:
+      - Complete map of the OSPF area’s topology using LSAs (Link State Advertisements).
+    - Built by:
+      - Exchanging and synchronizing LSAs with neighbors.
+    - Purpose:
+      - To represent the entire OSPF network as a graph for SPF (Shortest Path First) calculation.
+    - Each router builds an identical LSDB in the area. The Dijkstra algorithm is run on this database to calculate the best paths.
+	#show ip ospf database
+	
+	3. Routing Table
+    - What it contains:
+      - Best routes to all known networks based on SPF calculation.
+    - Populated from:
+      - The LSDB after running Dijkstra’s algorithm.
+    - Includes info like:
+      - Destination network
+      - Next-hop IP address
+      - Outgoing interface
+      - Metric (cost)
+    - This is the actual table used by the router to forward packets.
+  
+	
+  - OSPF Area Design (OSPF Hierarchical Structure):
+    - Area 0 (Backbone Area) is mandatory and must be present.
+    - All other areas must connect to Area 0.
+    - Helps reduce the size of LSDBs and limits SPF calculations.
+    - Improves scalability and performance.
+	
+  - What is OSPF Area Design?
+    - OSPF (Open Shortest Path First) is designed to scale efficiently. To do this, it divides a network into areas.
+    - An area is a logical grouping of routers. These routers share link-state information only within that area.
+	
+	
+  - Why Use OSPF Areas (Hierarchical Design)?
+    - Here’s why we split OSPF into areas instead of having one big flat network:
+      Benefit	                    Description
+      Scalability	                Smaller LSDB per area → less memory & CPU load
+      Faster Convergence	        LSAs are contained in the area, so updates spread quicker
+      Reduced Routing Table Size	Routes can be summarized between areas
+      Network Stability	            Failures in one area don’t affect others as much
+      Better Control & Security	    Each area can be controlled and isolated logically
+	  
+  - OSPF Hierarchical Structure
+    - OSPF follows a 2-Level Hierarchical Design:
+    1. Backbone Area (Area 0):
+       - The core of the OSPF network
+       - All other areas must connect to Area 0 (either directly or virtually)
+       - Think of this as the central highway of OSPF.
+	   
+    2. Non-Backbone Areas (Area 1, 2, 3...):
+       - These are the normal areas that connect to Area 0.
+       - Routers in these areas don’t know about every other router in other areas — they just get summarized routes from Area 0.
+	   
+  - OSPF Router Types in Area Design
+     - Router Type	                              Description
+     - Internal Router	                          All interfaces in the same area
+     - Backbone Router	                          Has at least one interface in Area 0
+     - Area Border Router (ABR)	                  Connects one or more non-backbone areas to Area 0
+     - Autonomous System Boundary Router (ASBR)	  Connects OSPF to other routing protocols (e.g., BGP, RIP)
+	 
+  - Real-World Analogy
+    - Think of:
+     - Area 0 = Headquarters (where all big decisions happen)
+     - Other Areas = Branch offices
+     - Everyone reports up to HQ, not directly to each other
+	 
+  - What is the Process ID in OSPF?
+   - The OSPF Process ID is a locally significant number used to identify an OSPF routing process on a single router.
+     Router(config)# router ospf 1 (This is the Process ID)
+	 
+  - Locally Significant?
+   - Yes! It means:
+   - The Process ID has no effect on other routers.
+   - You can run multiple OSPF processes on the same router with different process IDs.
+   - Routers in the same OSPF network do NOT need to have the same process ID to form adjacencies.
+   
+  - Why Do We Use It?
+   - To differentiate between multiple OSPF processes running on the same router.
+   - Helps in administrative organization, especially in large-scale or multi-tenant networks.
+   - Allows for OSPF process migration or testing without affecting the existing one.
+
+  - What is the Range of Process ID in OSPF?
+   - The range is: 1 to 65535
+   
+  - Example:
+     Router(config)# router ospf 1
+     Router(config-router)# network 10.0.0.0 0.0.0.255 area 0
+
+     Router(config)# router ospf 10
+     Router(config-router)# network 192.168.1.0 0.0.0.255 area 1
+   - In this case:
+     - OSPF process 1 is advertising 10.0.0.0/24 in area 0.
+     - OSPF process 10 is advertising 192.168.1.0/24 in area 1.
+     - Both run independently, even though they're on the same router.
+	 
+  - Step-by-Step OSPF Configuration
+   Step 1: Router(config)# router ospf 1
+          (1 is the OSPF process ID (can be any number).)
+	
+  Step 2: Advertise Networks into OSPF
+          Router(config-router)# network 192.168.1.0 0.0.0.255 area 0
+          Router(config-router)# network 10.0.0.0 0.0.0.3 area 0
+  Step 3: Verify OSPF Status
+          Router# show ip protocols
+          Router# show ip ospf
+          Router# show ip ospf neighbor
+          Router# show ip ospf interface brief
+
+
+- What is a Wildcard Mask?
+  - A wildcard mask is used to specify which bits of an IP address should be matched and which bits can vary.
+    0 bit = must match exactly
+    1 bit = can vary (ignore)
+  - It’s essentially the inverse of a subnet mask.
+  
+- Wildcard Mask vs Subnet Mask
+  Purpose	                Subnet Mask	                  Wildcard Mask
+  Used in	                IP subnetting	              ACLs and OSPF (and other route filtering)
+  Meaning of 1	            Network bit (must match)	  Bit can vary
+  Meaning of 0	            Host bit (can vary)	          Bit must match exactly
+  Example(192.168.1.0/24)	255.255.255.0	              0.0.0.255
+  
+- Key Differences Summary
+  Feature	          Subnet Mask	             Wildcard Mask
+  Used For	          Defining network range	 Matching IPs in ACL/OSPF
+  Logical Operation	  AND (for subnetting)	     NOT (used in matching logic)
+  Meaning of 0	      Host part (can change)	 Must match
+  Meaning of 1	      Network part (fixed)	     Don’t care (can vary)
+  
+- The main purpose of a wildcard mask is to specify what range of IP addresses can be allowed or denied in the ACLs and with routing protocols like OSPF.

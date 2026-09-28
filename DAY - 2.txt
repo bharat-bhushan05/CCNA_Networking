@@ -1,0 +1,60 @@
+Note :- "Networking is the backbone of every IT system. Whether it's Google, Amazon, Facebook, Banking Systems, Cloud Infrastructure, VoIP, CCTV, Data Centers, everything runs on networking."
+
+ 
+   
+Network Fundamentals  
+	   
+	1. What is Network and Networking?
+	Ans :- A network is a collection of interconnected devices (computers, servers, routers, switches, etc.) that communicate with each other to share resources and data.
+
+	 - Examples of Networks:
+		- Home Network: Your Wi-Fi router connects multiple devices like laptops, phones, and smart TVs.
+		- Office Network: Employees share files and printers using a LAN (Local Area Network).
+		- Internet: The largest network, connecting billions of devices worldwide.
+	
+Networking :- Networking is the process of designing, building, managing, and maintaining networks to ensure devices can communicate efficiently.
+             “Networking is the exchange of data between connected devices.”
+ 
+ - Key Functions of Networking:
+    - Data Communication – Ensuring devices can exchange information.
+    - Resource Sharing – Sharing printers, files, and internet connections.
+    - Security Management – Protecting data from unauthorized access.
+    - Troubleshooting – Diagnosing and fixing network issues.
+ 
+
+- Types of Networks :- Networks are classified based on their size, coverage, and purpose. Here are the most common types: 
+
+  - LAN (Local Area Network): Small network (e.g., office, home).
+  - WAN (Wide Area Network): Large network (e.g., the Internet).
+  - MAN (Metropolitan Area Network): City-wide network. 
+  - WLAN (Wireless LAN): Wi-Fi-based network.
+  - SAN (Storage Area Network) : DATA Storage 
+  
+  A. Based on Size & Coverage
+  Network Type	                   Description	                                   Example
+  PAN (Personal Area Network)	   Smallest network for personal devices	       Bluetooth, USB tethering
+  LAN (Local Area Network)	       Small network in a home, office, or school	   Wi-Fi in your house
+  WLAN (Wireless LAN)	           LAN without cables, uses Wi-Fi	               Office Wi-Fi
+  MAN (Metropolitan Area Network)  Covers a city or large area	                   City-wide Wi-Fi
+  WAN (Wide Area Network)	       Covers multiple locations, even worldwide	   The Internet
+  CAN (Campus Area Network)	       Interconnects LANs within a campus	           University or hospital network
+  
+  - Example:
+      - Your home Wi-Fi is a LAN.
+      - Your mobile data connection is part of a WAN (Internet).
+	  
+  - LAN (Local Area Network) :- 
+      - A Network in Which geographical area is small.
+      - some user in the same room/department connected together using a switch device. or some users in different room/department connected together using a router and some switches. 
+	  
+   - WAN (Wide Area Network)
+      - A Network type in which geographical area is very large.
+	  - Users connected together globally throught the internet.	
+	
+  B. Based on Functionality
+  Network Type	                   Description	                                                Example
+  Client-Server	                   Centralized network with a server managing clients	        Office network
+  Peer-to-Peer (P2P)	           Devices communicate directly without a central server	    File-sharing apps like BitTorrent
+  Intranet	                       Private network within an organization	                    Corporate portal for employees
+  Extranet	                       Controlled access to an internal network for external users  Supplier access to a company’s inventory system
+  Internet                         massive network of interconnected computers.                 worldwide

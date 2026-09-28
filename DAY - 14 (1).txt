@@ -1,0 +1,312 @@
+3. Dynamic Routing :- Dynamic Routing is a routing technique where routers automatically learn and exchange routing information using routing protocols.
+        - The router doesn't need the admin to manually define every route — it learns routes from its neighbors and updates its routing table accordingly.
+		- Dynamic routing protocol, exchange routing information with the neighbors and build the routing table automatically.
+		- There is no need to know the destination networks.
+		- Administrator need to advertise only the directly connected networks.
+		- Any Changes in the network topology are automatically updated with the help of routing update.
+		
+    - Why Do We Use Dynamic Routing?
+      Reason	               Description
+      Auto-updating	Routes     adjust when the network topology changes (e.g., link failure)
+      Scalable	               Great for medium to large and complex networks
+      Less manual work	       Saves time in big environments
+	  Redundancy support	   Can calculate and choose best backup paths
+	  Better performance	   Selects best route based on metrics
+	  
+	- Where is Dynamic Routing Used?
+      Scenario	                        Why Use Dynamic Routing?
+      Large enterprise networks	        Too many routes to manage manually
+      Service provider networks	        Dynamic route sharing between multiple routers
+	  Multi-path environments	        Load balancing and automatic failover
+      Networks with frequent changes	Routing adjusts automatically
+
+    - How Dynamic Routing Works
+      - Routers use routing protocols to communicate and share routes.
+      - Each router builds a routing table based on received info.
+      - If a network change occurs (like a link failure), routers recalculate paths.
+	  
+	- Advantages of Dynamic Routing
+      Advantage	              Description
+      Auto learning	          No need to manually update routes
+      Self-healing	          Reroutes automatically during failures
+      Scalable	              Can handle thousands of networks
+      Metric-based decision	  Chooses best route automatically
+      Load balancing	      Some protocols support equal-cost multi-path
+	  
+	  (i)  There is no ned to know the destination networks.
+	  (ii) Need to advertised directly connected networks.
+	  (iii) Update the topology-changes dynamically.
+	  (iv) Administrator work is redured.
+	  
+	  
+	- Disadvantages of Dynamic Routing
+      Disadvantage	                 Description
+      More complex to configure	     Requires understanding of protocols
+      Uses more resources	         CPU, RAM, and bandwidth usage for updates
+      Slower than static initially	 Needs convergence time during failures
+      Less secure by default	     Routes are shared openly unless secured (e.g., OSPF authentication)
+
+
+- Types of Dynamic Routing :- Dynamic routing protocols are categorized based on how they learn, share, and calculate routes. There are three main types, plus one advanced category:
+	  
+   - There are three main types of Dynamic Routing Protocols:
+     Type	                Description	                                                      Examples
+     1.Distance Vector	    Shares full routing table with neighbors periodically	          RIP, IGRP
+     2.Link-State	        Builds a full map of the network and calculates shortest path	  OSPF, IS-IS
+     3.Hybrid	            Mix of both (distance vector + link-state features)	              EIGRP
+   
+   - Dynamic Routing :- IGP (Interior Gateway Protocol) - Distance Vector (RIP, IGRP), Hybrid Protocol (Advanced Distance vector protocol) (EIGRP), Link-state protocol (OSPF, IS-IS)
+                        EGP (Exterior Gateway Protocol) - Path Vectore Protocol (BGP).
+						
+   - Term	Stands for	Scope	Example Protocols
+     IGP	Interior Gateway Protocol	Inside an organization or network (AS - Autonomous System)	RIP, OSPF, IGRP, EIGRP, IS-IS
+	 (The protocol used to route the packets inside an autonomous system, are termed as interior routing protocol)
+     EGP	Exterior Gateway Protocol	Between different organizations/networks (between ASes)	BGP (Border Gateway Protocol)
+	 (The routing protocols that communicate between the two or more Autonomous System(AS) are termed as Exterior routing protocols)
+  
+   - Why are They Needed?
+     IGP helps routers within a single company, university, or ISP’s internal network to find the best paths.
+     EGP helps different organizations’ networks (like ISPs and companies) talk to each other across the internet.
+	 
+   - How IGP Works (Interior Routing)
+     - Operates within an Autonomous System (AS)
+     - Shares routes between routers in the same network
+     - Uses metrics like hop count, cost, bandwidth, etc.
+     - Common IGPs:
+       Protocol	  Type	             Metric
+       RIP	      Distance Vector	 Hop Count
+       OSPF	      Link State	     Cost (bandwidth)
+       EIGRP	  Hybrid	         Composite metric
+	   
+   - How EGP Works (Exterior Routing)
+     - Used to exchange routing information between ASes
+     - Only one major EGP in use today: BGP (Border Gateway Protocol)
+     - BGP uses AS-path, prefix length, policy-based routing, etc.
+     - It’s path vector-based, not just metric-based
+	 
+   - Example Scenario
+     Router	                Location	                                     Protocol Type
+     Router A ↔ Router B	Both inside same company (AS 100)	             IGP (like OSPF)
+     Router B ↔ Router C	Connecting company A to ISP (AS 100 ↔ AS 200) 	 EGP (like BGP)
+
+
+   1. Distance Vector Routing Protocol
+    - How It Works:
+	  - It works with Bellman-Ford Algorithm.
+      - Routers send their entire routing table to directly connected neighbors periodically (e.g., every 30 seconds in RIP).(Performs periodic Updates.)
+	  - Full routing table are exchanged.
+      - Decision made based on distance (metric) and direction (vector).
+	  - Uses hop count (Max hop count (in RIP)	15 (16 = unreachable)) to determine the best path.
+	  - Updates are throught broadcast.
+      - Simple, but slow to converge.
+    - Advantages:
+      - Easy to configure
+      - Low resource usage
+	  
+	- Disadvantages:
+     - Slow convergence
+     - Prone to routing loops (uses split horizon, hold-down timers to prevent)
+     - Not scalable for large networks
+
+    - Examples:
+     - RIP (Routing Information Protocol) – uses hop count as a metric (max 15 hops)
+     - IGRP (Interior Gateway Routing Protocol) – Cisco proprietary, now obsolete
+	 
+	- Key Features:
+      Feature	       Value
+      Update Method	   Periodic full table
+      Metric	       Hop count, delay
+      Convergence	   Slow
+      Simplicity	   Very simple to configure
+      Scalability	   Low
+	  
+	- Why These Mechanisms Exist (Split Horizon, Hold-Down)
+     - Problem in Distance Vector Protocols:
+       - Routing Loops – when routers keep passing incorrect routing information in circles, causing high CPU usage, unstable routes, and network congestion.
+       - To prevent that, we use loop prevention techniques like:
+         1. Split Horizon
+         2. Hold-down Timers
+        (Also: Poison Reverse, Route Aging, etc.)
+		
+	1. What is Split Horizon? :- A rule that prevents a router from advertising a route back on the interface from which it was learned.
+     - Example:
+       - Router A learns that 10.0.0.0/24 is reachable via Router B (on interface Fa0/0).
+       - Now, Split Horizon prevents A from telling B:
+         - "Hey B, you can reach 10.0.0.0/24 via me!" ← That would create a loop.
+     - Why?
+       - Because B is the one who told A in the first place! Forwarding that info back would be illogical and create false routes if B's link goes down.
+	   
+	2. What is a Hold-down Timer? :- A timer that prevents a router from accepting new, possibly incorrect routing updates for a route that's considered down.
+     - How it works:
+      - Router A detects a route (e.g., 192.168.1.0/24) is unreachable.
+      - A puts that route into a hold-down state for, say, 180 seconds (default in RIP).
+      - During this time, A ignores any updates about this route unless:
+         - The update comes from the same router that originally advertised it AND
+         - It has a better (shorter) metric
+     - This avoids "flapping" or premature acceptance of bad routes from routers that haven't yet noticed the failure.
+	 
+	- Combining Both in Action
+     - Let’s say:  A --- B --- C
+     - All routers are sharing routes via RIP.
+      - C goes down (link failure).
+      - B tells A: "C is down!"
+      - Without Split Horizon, A might say: “No, C is still up via me!” (false) 
+      - A might mislead B, and routing loops start.
+      - Split Horizon stops A from saying that.
+    - Now, even if A gets a wrong update during this confusion, Hold-down Timer ensures:
+      - A waits before accepting it → avoids bad data during instability.
+	  
+	- Summary Table
+      Feature	            Split Horizon	                             Hold-down Timer
+      Purpose	            Prevents routing loops	                     Avoids rapid acceptance of bad updates
+      How it works	        Doesn’t advertise back on same interface	 Waits before accepting new route info
+      Used in	            RIP, IGRP	                                 RIP, IGRP
+      Default time (RIP)	Always on (no time value)	                 180 seconds
+      Benefit	            Loop prevention	                             Route stability during change
+	  
+	- Quick Analogy
+      - Split Horizon: "Don't tell someone what they just told you!"
+      - Hold-down Timer: "Wait a bit before believing news about something that just broke."
+	  
+	3. What is Poison Reverse? :- Poison Reverse is a loop prevention technique used in Distance Vector routing protocols like RIP, where:
+      - If a router learns about a route from an interface, it will advertise that route back out the same interface with a metric of 16 (infinite in RIP = unreachable).
+	- Why is it needed?
+      - Poison Reverse makes sure that routers know that a path is no longer valid, rather than just silently dropping it (like with basic Split Horizon).
+	  
+	- Example:
+      - Let’s say :- A ——— B ——— C
+      - Router A learns about network 10.0.0.0/24 from Router B.
+      - Now B’s path to 10.0.0.0/24 goes down.
+      - B advertises back to A:
+        - “Hey A, 10.0.0.0/24 is unreachable from me now (metric = 16)” ← This is poison reverse.
+      - If A didn’t know this, it might still think B had a valid path and could end up in a loop.
+    
+	- Summary of Poison Reverse
+      Feature	      Description
+      Purpose	      Prevent routing loops
+      Metric Used	  16 (infinity in RIP)
+      How it works	  Advertises a route as unreachable back on the same interface it was learned from
+      Used with	      Split Horizon (optional combo)
+      Benefit	      Clears invalid routes from neighbor's routing tables quickly
+	  
+	  
+	4. What is Route Aging in RIP? :- Route Aging is the process of removing stale or outdated routing information from a router's routing table if no updates are received in a certain period.
+	
+	- Timers in RIP:
+      Timer Type	    Default (RIP)	     What it Does
+      Update Timer	    30 sec	             Sends routing table updates every 30 seconds
+      Invalid Timer	    180 sec	             If no update for 180 sec → route is marked invalid
+      Hold-down Timer	180 sec	             Prevents route from being immediately reinstated
+      Flush Timer	    240 sec	             After this, invalid routes are removed from the table
+	  
+	- Why Route Aging is important?
+      - Because in a distance vector protocol, updates happen periodically, not triggered.
+      - If a router crashes or a link silently dies, other routers might never know… unless we age out the route.
+	  
+	- Example:
+      - Router A learns about 192.168.1.0/24 from Router B.
+      - Router B goes offline, and A stops getting updates.
+      - After 180 seconds, A marks the route as invalid.
+      - After 240 seconds, it flushes the route from its table completely.
+     - This avoids routers holding on to dead routes forever.
+	 
+	- Why We Use These Mechanisms Together?
+      Mechanism	              Purpose
+      Split Horizon	          Prevents sending routes back the way they came
+      Poison Reverse	      Tells neighbors: “Don’t use me for that route anymore”
+      Hold-down Timer	      Freezes route until stability is confirmed
+      Route Aging	          Times out old, unused routes automatically
+	  
+	- Together, they:
+      - Prevent loops
+      - Improve convergence
+      - Make routing more reliable and stable
+	  
+	- Analogy Time:
+     - Split Horizon: “Don’t repeat what I just said.”
+     - Poison Reverse: “That road is closed—don’t even try going through me.”
+     - Route Aging: “If I don’t hear from you in 3 minutes, I’ll assume you’re gone.”
+     - Hold-down: “I won’t believe anything about that road until things settle.”
+
+	 
+   2. Link-State Routing Protocol
+    - How It Works:
+	  - It work with Dijkstra Algorithm.
+	  - It performs Link State updates.
+      - Routers exchange information about directly connected links, not the full routing table.
+	  - Missing routes are exchanged.
+	  - Updates are through multicast.
+      - Each router creates a link-state database (LSDB) and uses Dijkstra's algorithm to calculate the best path(shortest path).   (Lowest Cost)
+	  - Builds a full topological map of the network.
+    
+	- Advantages:
+     - Fast convergence
+     - More scalable and reliable
+     - Hierarchical (areas in OSPF)
+
+    - Disadvantages:
+     - More complex configuration
+     - Higher CPU and memory usage
+     - Initial flooding can use more bandwidth
+	 
+	- Examples:
+     - OSPF (Open Shortest Path First) – uses cost as a metric (based on bandwidth)
+     - IS-IS (Intermediate System to Intermediate System) – used in larger service provider networks
+	 
+	- Key Features:
+      Feature	       Value
+      Update Method	   Only changes (LSAs)
+      Metric	       Cost (bandwidth-based)
+      Convergence	   Fast
+      Simplicity	   Moderate
+      Scalability	   High 
+	 
+	 
+   3. Hybrid Routing Protocol
+    - How It Works:
+     - Combines features of both Distance Vector and Link-State.
+	 - It works with DUAL Algorithm (Diffusing Update Algorithm).
+     - Sends partial updates (not full table like RIP).
+	 - Missing route are exchanged.
+	 - updates are throught multicast.(224.0.0.10)
+     - Maintains a topology table (like link-state) and uses metrics (like DV).
+    - Advantages:
+     - Fast convergence
+     - Less bandwidth usage than link-state
+     - Reliable and scalable
+  
+    - Disadvantages:
+     - Cisco proprietary (not open standard)
+     - Slightly complex configuration
+
+    - Example:
+     - EIGRP (Enhanced Interior Gateway Routing Protocol) – Cisco proprietary protocol, uses bandwidth, delay, reliability, load as metrics
+	 
+	- Key Features:
+      Feature	      Value
+      Update Method	  Partial & triggered
+      Metric	      Composite (bandwidth, delay, load, reliability)
+      Convergence	  Very fast
+      Simplicity	  Cisco-specific
+      Scalability	  High
+	 
+	 
+   4. Bonus: Advanced / Exterior Routing Protocols
+     - Used for routing between different autonomous systems (AS) (like between ISPs or large networks)
+    - Example:
+      - BGP (Border Gateway Protocol) – Used for internet routing
+	  
+   - Key Features:
+     Feature	       Value
+     Update Method	   Path-vector
+     Metric	Path       attributes (AS-path, etc)
+     Convergence	   Slow
+     Scalability	   Extremely high
+     Used by	       ISPs, global networks
+
+   - Summary Table:
+     Type	              Protocols	       Metric Used	       speed         Best For
+     Distance Vector	  RIP, IGRP	       Hop Count, Delay	   Slow          Small, simple networks
+     Link-State	          OSPF, IS-IS	   Cost	               Fast          Enterprise and large networks
+     Hybrid	              EIGRP	           Bandwidth, Delay	   Very Fast     Cisco-based, medium-large nets
+     Advanced	          BGP	           Path Attributes	   Slow          Internet-scale networks

@@ -1,0 +1,247 @@
+- How to Take Backup of Cisco Router/Switch Configuration
+ - You can back up the config to:
+   - TFTP Server (most common in labs and networks)
+   - FTP/SCP Server
+   - USB drive (if supported)
+   - Terminal/console copy
+   
+ A. Backup Using TFTP (most common)
+ - Steps:
+   - Set up a TFTP server on your PC (e.g., Tftpd32 or SolarWinds).
+   - Ensure the router/switch can reach the TFTP server (ping it).
+   - Run this command:
+     #copy running-config tftp
+ - Example output:
+   - Router# copy running-config tftp
+   - Address or name of remote host []? 192.168.1.100
+   - Destination filename [running-config]? R1-backup.cfg
+   - Backup will be saved as R1-backup.cfg on the TFTP server.
+   
+ B. Backup Using USB (if device supports USB)
+   #copy running-config usbflash0:backup.cfg
+ 
+ C. Backup to Terminal (manual)
+   #show running-config
+   - Copy and paste into a text file (not ideal but works in emergency cases).
+   
+- How to Restore Configuration
+ A. Restore from TFTP Server
+ - Command:
+   #copy tftp running-config
+ - Example:
+   #Router# copy tftp running-config
+   #Address or name of remote host []? 192.168.1.100
+   #Source filename []? R1-backup.cfg
+   #Destination filename [running-config]? 
+ - If you want to overwrite startup-config (for reload boot):
+   #copy tftp startup-config
+ - Then reload the device:
+   #reload
+   
+ B. Restore from USB
+   #copy usbflash0:backup.cfg running-config
+ - Important:
+   #copy tftp running-config merges config with current running config.
+
+ - To replace startup-config entirely, use:
+   #copy tftp startup-config
+   #reload
+   
+- Summary Table
+  Task	                     Command
+  Backup to TFTP	         copy running-config tftp
+  Restore from TFTP	         copy tftp running-config
+  Backup to USB	             copy running-config usbflash0:filename
+  Restore from USB	         copy usbflash0:filename running-config
+  Save config permanently	 copy running-config startup-config
+  
+  
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+c2600-i-mz.122-28.bin
+
+- How to Take Backup of Cisco Router/Switch IOS image
+
+- Prerequisites:
+  - A TFTP server running on your PC (e.g., Tftpd32, SolarWinds, or TFTPD64)
+  - The router/switch must be able to reach the TFTP server (same subnet or reachable route)
+  
+- Step 1: Check Existing IOS Image
+  - First, find the image name and path:
+    #show flash:
+    or
+    #show version
+  - Look for something like:
+    - System image file is "flash:c1900-universalk9-mz.SPA.154-3.M3.bin"
+	
+- Step 2: Copy IOS Image to TFTP Server
+  - Use this command:
+    #copy flash: tftp
+	
+  - Example session:
+    #Router# copy flash: tftp
+    #Source filename []? c1900-universalk9-mz.SPA.154-3.M3.bin
+    #Address or name of remote host []? 192.168.1.100
+    #Destination filename [c1900-universalk9-mz.SPA.154-3.M3.bin]?
+    - The file will now be copied to the TFTP server.
+	
+- Notes:
+  - You must type the exact file name of the IOS image.
+  - Ensure the TFTP server has write permission.
+  - You can verify success on the TFTP server (it will show the file received).
+  
+- Optional: Backup IOS Image to USB
+  - If your router/switch supports USB:
+    #copy flash:c1900-universalk9-mz.SPA.154-3.M3.bin usbflash0:
+    - Use dir usbflash0: to confirm the file was copied.
+	
+- Example for Quick Backup:
+  #Router# show flash:
+  #Router# copy flash:c1900-universalk9-mz.SPA.154-3.M3.bin tftp
+  #Address or name of remote host []? 192.168.1.100
+  #Destination filename [c1900-universalk9-mz.SPA.154-3.M3.bin]?
+  
+- Verify Backup:
+  - On your TFTP server PC, check the backup directory. The IOS file should be saved and ready to restore when needed.
+  
+- Now that you've backed up your Cisco IOS image, here’s how you can restore it to a Cisco router or switch.
+- Use Case:
+ - You may need to restore an IOS image:
+   - After a corrupted flash
+   - On a new or replacement device
+   - For upgrading/downgrading firmware
+   
+ - Prerequisites:
+   - TFTP server running with IOS image stored (e.g., c1900-universalk9-mz.SPA.154-3.M3.bin)
+   - Router/Switch with network access to the TFTP server
+   - Enough free space in flash memory
+   
+- Step 1: Check Flash Memory (optional)
+  #show flash:
+  - Or erase old image if not needed:
+  #erase flash:
+  - Be careful! This deletes the current IOS image.
+  
+- Step 2: Copy IOS Image from TFTP
+  #copy tftp: flash:
+  - Example session:
+    #Router# copy tftp: flash:
+    #Address or name of remote host []? 192.168.1.100
+    #Source filename []? c1900-universalk9-mz.SPA.154-3.M3.bin
+    #Destination filename [c1900-universalk9-mz.SPA.154-3.M3.bin]? 
+    - Wait for the transfer to complete successfully.
+	
+- Step 3: Verify Image in Flash
+  #dir flash:
+  - Ensure the image is listed correctly.
+  
+- Step 4: Set Boot Variable (if needed)
+  #conf t
+  #boot system flash:c1900-universalk9-mz.SPA.154-3.M3.bin
+  #end
+
+ - Then:
+   #write memory
+   
+- Step 5: Reload the Device
+  #reload
+  - During boot, the router/switch should load the newly restored IOS image.
+  
+- Summary Commands
+  Task	                          Command
+  Copy IOS from TFTP to flash	  copy tftp: flash:
+  Erase flash (optional)	      erase flash:
+  Set boot variable	              boot system flash:<ios_image_name>
+  Save config	                  write memory or copy run start
+  Reload device	                  reload
+  
+- Notes:
+  - Use show version after reload to verify which IOS is running.
+  - If the device gets stuck in ROMmon mode, use tftpdnld to manually restore IOS.
+
+
+
+
+ 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+Switching 
+
+ - Working of Switching :- A switch is a network device that connects multiple devices (like computers, printers, servers) in a LAN (Local Area Network) and allows them to communicate efficiently.
+                         - Unlike a hub (which just broadcasts data to all ports), a switch intelligently forwards data only to the intended device.
+						 
+ - Step-by-Step Working of a Switch
+   1. Device Connects to Switch:
+     - When a device (say a laptop) connects to the switch, it sends out data frames.
+
+   2. MAC Address Learning:
+     - Every network device has a unique MAC address.
+     - The switch reads the source MAC address from the incoming frame.
+     - It stores the MAC address and the port number (the port where the frame came in) in a table called the MAC Address Table or CAM Table.
+     - Example:
+       MAC Address	         Port
+       AA:BB:CC:DD:EE:01	 1
+       AA:BB:CC:DD:EE:02	 2
+	   
+   3. Forwarding the Frame:
+     - The switch then looks at the destination MAC address inside the frame.
+     - If the destination MAC is already known (present in the MAC table), the switch forwards the frame only to that specific port.
+     - If the destination MAC is unknown (not in the table), the switch floods the frame out to all ports except the incoming one (like a hub would do).
+
+   4. Learning Continues:
+     - As more devices send frames, the switch keeps learning new MAC addresses and building or updating its MAC table.
+
+
+- Mac Learning and Aging time in Switch 
+ 
+  - What is MAC Learning in a Switch? :- MAC Learning is the process where a switch learns which MAC address is reachable through which port.
+                                       - It builds a table (called the MAC Address Table or CAM Table) by reading the Source MAC Address of incoming frames.
+
+  - MAC Learning Process (Step-by-Step)
+    1. Frame Comes In:
+      - When a frame enters the switch, it checks the Source MAC Address.
+
+    2. Check MAC Address Table:
+      - If the Source MAC is not in the table, the switch adds an entry:
+        - Source MAC Address + Incoming Port Number.
+
+    3. Build CAM (Content Addressable Memory) Table:
+      - This table maps MAC addresses to switch ports.
+      - Example:
+        MAC Address	         Port
+        AA:BB:CC:11:22:33	 Fa0/1
+        AA:BB:CC:44:55:66	 Fa0/2	
+		
+    4. Destination MAC Lookup:
+      - When forwarding, the switch looks up the destination MAC in the table and sends the frame directly to the correct port.
+      - If the destination MAC is unknown, the switch floods the frame out to all ports (except incoming).
+
+  - Where Is the MAC Table Stored?
+    - It is stored inside the CAM (Content Addressable Memory) of the switch.
+    - CAM is specialized memory optimized for fast lookups and fast forwarding decisions.
+	
+  - What is Aging Time in MAC Learning?
+    - Aging time is the time duration a MAC address entry stays in the table without being refreshed.
+    - If no frame is received from that MAC within the aging time, the switch will delete that MAC address from the table.
+    - Default Aging Time in Cisco Switches:
+    - 300 seconds (5 minutes).
+    - This helps in removing inactive or disconnected devices automatically from the switch table.
+	
+  - Types of MAC Address Learning in Switches
+    Type	                 Description
+    Dynamic Learning	     Automatically learns MAC addresses when frames are received. (default)
+    Static MAC Entries	     Admin manually configures a MAC address on a specific port (Permanent, no aging)
+    Sticky MAC Addresses	 Learned dynamically and saved into the switch configuration automatically (common in port security)
+	
+  - What is Sticky MAC Learning?
+   - Sticky MAC Address means the switch dynamically learns a MAC address like normal, but it automatically saves that MAC address into the running-config.
+   - After learning, if you save the config (write memory or copy run start), the learned MAC becomes permanent, just like a static MAC address.
+
+  - Quick Example of Each Type
+    - Dynamic:
+      - Switch sees MAC AA:BB:CC:11:22:33 on Fa0/1 → adds it automatically.
+
+    - Static:
+      - Admin manually says: "MAC AA:BB:CC:11:22:33 will always be on Fa0/1" → never aged out.
+
+    - Sticky:
+      - Switch learns dynamically but remembers (after saving the config) → even after reboot, still knows!

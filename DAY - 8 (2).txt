@@ -1,0 +1,126 @@
+Question :- What is subnetting? What is the use of subnetting?
+Ans :- Subnetting is dividing a large network into smaller, more efficient subnetworks. It helps improve performance, security, and management.
+
+1. Understanding an IP Address
+   - An IPv4 address is a 32-bit number, divided into 4 octets (each 8 bits). Example:
+     - 192.168.1.1 → 11000000.10101000.00000001.00000001 (binary)
+     - Each octet ranges from 0 to 255.
+
+2. Subnet Mask – What Is It?
+   - A subnet mask defines how many bits belong to the network and how many to the hosts. Example:
+   - Default Subnet Masks:
+     
+	 Class	   Default Subnet Mask	    CIDR	   # of Hosts
+      A	       255.0.0.0	             /8	       16,777,214
+      B	       255.255.0.0	             /16	   65,534
+      C	       255.255.255.0	         /24	   254
+   - CIDR (Classless Inter-Domain Routing) is another way of writing a subnet mask using a slash notation (/24 means first 24 bits are network bits).
+   
+   - Types of Subnetting in IPv4 :- Subnetting can be categorized into different types based on how subnets are created and used. There are two main types of subnetting:
+     1. Fixed-Length Subnetting (FLSM - Fixed-Length Subnet Masking)
+     2. Variable-Length Subnetting (VLSM - Variable-Length Subnet Masking)
+   
+   1. Fixed-Length Subnet Mask (FLSM)
+   - What is FLSM?
+      - In FLSM, all subnets are created with the same number of hosts by dividing the network into equal-sized subnets.
+      - Each subnet has the same subnet mask.
+      - IP addresses are evenly distributed but can lead to wasted addresses if not all subnets require the same number of hosts.
+   - Example of FLSM Subnetting:
+      - Given 192.168.1.0/24 (Class C network, 254 usable hosts).
+      - We want 4 subnets → Need to borrow 2 bits (/26 subnet mask).
+      - Each subnet has 64 total addresses (62 usable hosts).
+      - Even if a subnet needs only 10 hosts, it still gets 62 (leading to IP wastage).
+   - When to Use FLSM?
+      - Simple network designs where all subnets need an equal number of hosts.
+      - Used in old routing protocols like RIP v1, which do not support VLSM.
+   
+   2. Variable-Length Subnet Mask (VLSM)
+   - What is VLSM?
+     - VLSM allows subnetting with different subnet masks to allocate IP addresses more efficiently.
+     - It assigns different subnet sizes based on host requirements.
+     - Minimizes IP wastage by giving larger subnets more addresses and smaller subnets fewer.
+     - Supported by modern routing protocols (OSPF, EIGRP, RIPv2, BGP).
+   - Example of VLSM Subnetting:
+     - Given 192.168.1.0/24 (254 usable hosts).
+     - Instead of splitting equally (like FLSM), we divide based on need:
+	   Subnet	            Hosts Needed	Subnet Mask	     Network Address    Usable IPs	                     Broadcast Address
+       Subnet 1 (Large)	    100	            /25 (128 IPs)	 192.168.1.0	    192.168.1.1 - 192.168.1.126	     192.168.1.127
+       Subnet 2 (Medium)	50	            /26 (64 IPs)	 192.168.1.128	    192.168.1.129 - 192.168.1.190	 192.168.1.191
+       Subnet 3 (Small)	    25	            /27 (32 IPs)	 192.168.1.192	    192.168.1.193 - 192.168.1.222	 192.168.1.223
+       Subnet 4 (Small)	    10	            /28 (16 IPs)	 192.168.1.224	    192.168.1.225 - 192.168.1.238	 192.168.1.239
+	   
+	- Advantages of VLSM:
+      - More efficient IP address usage (no wasted IPs like in FLSM).
+      - Better suited for real-world networks with varying host requirements.
+      - Allows hierarchical addressing, improving routing efficiency.
+    - When to Use VLSM?
+      - When different subnets need different host counts.
+      - When using routing protocols like OSPF, EIGRP, or RIPv2.
+
+
+   - Key Differences: FLSM vs. VLSM
+     Feature	         FLSM (Fixed-Length)	  VLSM (Variable-Length)
+     Subnet Size	     All subnets are equal	  Subnets have different sizes
+     IP Wastage	         High (unused IPs)	      Low (efficient use of IPs)
+     Routing Protocols	 Works with RIPv1	      Works with OSPF, EIGRP, RIPv2
+     Best for	         Simple networks	      Complex, scalable networks
+     Example	         4 subnets of /26	      Different subnet masks used
+   
+   
+- Network address and broadcast address Different Network example like (1 to 10) and (11 to 20) or like room with children communication.
+   
+- CIDR (Class inter domain routing) and prefix length (/24)(Network bit)
+- How many host we can connect in 1 network formula 2(H) - 2 =
+
+- Key Differences: Classful vs. Classless (CIDR)
+  Feature	         Classful Addressing	     Classless Addressing (CIDR)
+  Subnet Mask	     Fixed per class (A, B, C)	 Flexible (can use any mask)
+  IP Wastage	     High (unused IPs)	         Low (efficient IP usage)
+  Routing Protocols	 Supports only RIPv1	     Supports OSPF, EIGRP, RIPv2, BGP
+  Subnetting	     Not supported	             Supported
+  Supernetting	     Not possible	             Possible
+
+
+- Explain (192.168.1.0/24) (192.168.1.0/26) what is (network id, 1st ip address, last ip address, broadcast id)
+- first we discussed how we can find the subnet mask from the prefix or cidr value (192.168.1.39/29)
+- total bit - network bits = host bits to find the host bits
+- total bit - host bit = network bits to find the network bits
+- ask questions to student please tell me the subnet mask of /28 /30
+- how to find the subnet mask /29 /28 /26 with the help of table 
+  1 = 128
+  11 = 192
+  111 = 224
+  1111 = 240
+  11111 = 248
+  111111 = 252
+  1111111 = 254
+  11111111 = 255
+  - first we check how much octet this prefix is filling
+  - /20   /18    /25    /29    /11     /15    /17    /12
+  
+- find the range (network ip, 1st usable ip, last usable ip, broadcast ip, subnet mask)(192.168.39.24/29) we can find these value with the help to block  
+  size 
+  
+- 1st step we need to find the subnetmask with the help of table 
+- 2nd step we need to create block with the help of block size
+- in those octet has 255 value in subnet mask we don't touch that octet in ip like 255.255.255 we don't touch 3 octet in this secenario.
+- now in 4th octet we always minus values from 256 - 248 = 8 now we need to go with table of the 8 we need to create block size of 8 table like 0 8 16 24 32 40 48
+
+- now need to check 24 came on which block like 0  8  16  24  32   40  (24 come under 24 to 32 block size) now find the network id 1st ip, last ip and broadcast ip
+
+- now do practical with class c ip (192.168.20.10/30) 1st we need to find the subnet mask and then we need to create block with the help of 256 - 240 = value
+
+- subnetting of the class b (172.16.10.10/20) (172.15.17.18/19)
+
+- Subnetting of the class a (10.10.10/14) (10.8.0.1 10.11.255.254 10.11.255.255) next ip (122.143.167.12/9)
+
+
+- What is Supernetting?
+Ans :- Supernetting is a technique used to combine multiple smaller networks into a larger network. It reduces the number of routing table entries, making routing more efficient.
+
+Supernetting is also called:
+ - Route Aggregation
+ - Route Summarization
+   
+
+Subnetting Quiz :- https://subnetipv4.com/

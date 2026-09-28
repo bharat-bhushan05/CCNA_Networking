@@ -1,0 +1,273 @@
+How to set Password on Cisco Router :- Securing a Cisco router with passwords is essential to prevent unauthorized access. You can set passwords for different access levels
+
+  1. Console Access Password (for direct access via console cable)
+  2️. Enable Password / Enable Secret (for privileged mode access)
+  3️. VTY (Telnet/SSH) Password (for remote access)
+  4. AUX (Auxiliary) Port Password (for modem access)
+  5. Set password in encrypted format
+  
+  1. Set a Password for Console Access
+    - This password is required when physically accessing the router via the console port.
+  
+  - Command
+     Router# configure terminal
+     Router(config)# line console 0
+     Router(config-line)# password cisco123
+     Router(config-line)# login
+     Router(config-line)# exit
+     Router(config)# exit
+     Router#
+	 
+   - line console 0 → Selects the console line.
+   - password cisco123 → Sets the password (cisco123 can be changed).
+   - login → Enables password checking for console access.
+
+  2. Set Enable Password or Enable Secret
+    - enable password → Stores password unencrypted (not recommended).
+    - enable secret → Stores password encrypted (preferred).
+
+   - Steps to Set Privileged EXEC Mode Password
+     Router# configure terminal
+     Router(config)# enable secret mysecret123
+     Router(config)# exit
+     Router#
+    - Now, when you type enable, the router will ask for a password.
+    
+	- To check if the password is encrypted, use:
+      Router# show running-config
+    
+	- You will see:
+      enable secret 5 $1$MErP$F123x4VCZPjY98I.
+      The password is encrypted!
+	  
+	  
+  3. Set a Password for Remote Access (VTY - Telnet/SSH)
+    - This password is required when remotely accessing the router via Telnet or SSH.
+
+   - Steps to Set VTY Password
+     Router# configure terminal
+     Router(config)# line vty 0 4
+     Router(config-line)# password remote123
+     Router(config-line)# login
+     Router(config-line)# exit
+     Router(config)# exit
+     Router#
+ 
+   - line vty 0 4 → Selects virtual terminal lines for remote login.
+   - password remote123 → Sets the password.
+   - login → Enables password checking for remote access.
+   - By default, Cisco routers allow Telnet but not SSH.
+   
+   
+  4. Set a Password for AUX (Auxiliary) Port
+    - The AUX port is used for dial-in access via a modem.
+
+   - Steps to Set AUX Password
+     Router# configure terminal
+     Router(config)# line aux 0
+     Router(config-line)# password auxpass123
+     Router(config-line)# login
+     Router(config-line)# exit
+     Router(config)# exit
+     Router#
+   - Now, anyone connecting via the AUX port must enter a password.
+   
+   
+  - Extra Security - Encrypt All Passwords
+   - By default, console, VTY, and AUX passwords are stored in plain text.
+   - To encrypt them:
+     Router# configure terminal
+     Router(config)# service password-encryption
+     Router(config)# exit
+     Router#
+   - This command encrypts all passwords using a basic encryption method.
+   
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+
+How to Configure Telnet on Cisco Router.
+
+  - What is Telnet Protocol?
+    - Telnet (Telecommunication Network) is a network protocol used to remotely access and manage network devices like routers, switches, and servers using a command-line interface.
+      - It allows you to log in remotely to a device and execute commands.
+      - Unencrypted: All data, including passwords, is sent as plain text (Not secure for production unless used in a protected network).
+	  
+  - Telnet Details
+    Feature	           Value
+    Protocol	       Telnet
+    Port Number	       23 (TCP)
+    Transport Layer	   TCP
+    Security	       Not encrypted
+    Alternative	       SSH (port 22) – secure
+	
+  - Why Configure Telnet on a Cisco Router?
+    - To allow remote access and management of the router via a network connection.
+    - Example: You're sitting in one city and want to manage a router in another city — you use Telnet (or SSH) for that!
+
+  - Telnet Configuration on Cisco Router
+    - Requirements:
+      - IP address configured on router interface
+      - Enable password or login password
+      - VTY lines configured
+	  
+  - Step-by-Step Configuration:
+    1. Assign an IP Address to the Interface
+       #Router> enable
+       #Router# configure terminal
+       #Router(config)# interface fastethernet 0/0
+       #Router(config-if)# ip address 192.168.1.1 255.255.255.0
+       #Router(config-if)# no shutdown
+       #Router(config-if)# exit
+	   
+	2. Set a Password for Telnet Access
+       #Router(config)# line vty 0 4
+       #Router(config-line)# password cisco
+       #Router(config-line)# login (Local Login for username and password based authentication)
+       #Router(config-line)# exit
+	   
+	3. (Optional) Set an Enable Password for Privileged Mode
+       #Router(config)# enable password class
+	   
+	4. (Optional) Set a Banner
+       #Router(config)# banner motd #Unauthorized access is prohibited!#
+	   
+  - Telnet From a PC or Another Router
+    - On a PC or another router:
+      #telnet 192.168.1.1
+    - You'll be prompted to enter the password you set under line vty.
+	
+  - VTY Lines Explained
+    - VTY means Virtual Teletype
+    - line vty 0 4 = allows 5 simultaneous Telnet sessions
+    - You can configure access control, logging, timeouts, and even use access-lists for added security.
+	
+----------------------------------------------------------------------------------------------------------------------------------------
+
+How to Configure SSH on Cisco Router.
+
+  - What is SSH?
+    - SSH (Secure Shell) is a secure network protocol used to remotely access and manage devices like Cisco routers and switches.
+    - Unlike Telnet, SSH encrypts all communication, including usernames, passwords, and commands, making it safe for use over untrusted networks (like the internet).
+	
+  - SSH Details
+    Feature	          Value
+    Protocol	      SSH (Secure Shell)
+    Port Number	      22 (TCP)
+    Security	      Encrypted
+    Transport Layer	  TCP
+    Use	              Secure remote CLI access
+	
+  - Why Configure SSH on Cisco Router?
+   - SSH is used to:
+     - Securely manage routers/switches remotely
+     - Protect against eavesdropping and man-in-the-middle attacks
+     - Comply with network security policies
+	 
+  - Prerequisites Before Configuring SSH
+    1. IP address on the router interface
+    2. Hostname & domain name must be set (for key generation)
+    3. User accounts configured for login
+    4. VTY lines must be SSH-enabled
+	
+  - Step-by-Step: SSH Configuration on Cisco Router
+    1. Set Hostname and Domain Name
+       #Router> enable
+       #Router# configure terminal
+       #Router(config)# hostname R1
+       #R1(config)# ip domain-name example.com
+
+    2. Generate RSA Key (Encryption Key)
+       #R1(config)# crypto key generate rsa
+       - The name for the keys will be: R1.example.com
+       - How many bits in the modulus [512]: 1024
+	     (Use 1024 bits or more for strong encryption)
+		 
+	3. Create a Local User Account
+       #R1(config)# username admin password cisco123
+
+    4. Configure VTY Lines for SSH Access
+       #R1(config)# line vty 0 4
+       #R1(config-line)# login local
+       #R1(config-line)# transport input ssh
+       #R1(config-line)# exit
+	   
+	5. (Optional) Set Enable Password
+       #R1(config)# enable secret class
+    
+	- Verify SSH Configuration
+      #R1# show ip ssh 
+      #R1# show run | include ssh
+	  
+	- Test SSH Access (From Another Device or PC)
+      #ssh -l admin 192.168.1.1
+      - Replace admin with your username and 192.168.1.1 with your router’s IP.
+	  
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+DHCP (Dynamic Host Configuration Protocol) Server
+
+  - What is DHCP Server? :- DHCP (Dynamic Host Configuration Protocol) is a network protocol used to automatically assign IP addresses and other network configuration parameters (like subnet mask, gateway, DNS) to devices on a network.
+
+  - Why Do We Use DHCP?
+   - Manually assigning IPs to each device is time-consuming and error-prone. DHCP automates this process and ensures:
+     - IP address management is centralized and efficient
+     - Avoids IP conflicts
+     - Saves time, especially in large networks
+     - Devices can join and configure on the fly
+	 
+  - How DHCP Works – 4-Step Process
+     - It’s called DORA:
+       Step	              Description
+       D – Discover	      Client sends broadcast to find DHCP server
+       O – Offer	      DHCP server replies with an IP offer
+       R – Request	      Client requests to accept the offered IP
+       A – Acknowledge	  DHCP server sends acknowledgment, assigns the IP
+	   
+   - DHCP Port Number = 67 and 68
+     - Client Port number 67
+	 - DHCP Server Port number = 68
+
+  - How to Configure DHCP Server on Cisco Router
+   - Prerequisites:
+     - The router must have an interface with an IP address.
+     - You should decide the IP range (scope) you want to hand out.
+	 
+  - Step-by-Step: DHCP Configuration
+   1. Set the Router Interface IP
+      #Router> enable
+      #Router# configure terminal
+      #Router(config)# interface FastEthernet0/0
+      #Router(config-if)# ip address 192.168.1.1 255.255.255.0
+      #Router(config-if)# no shutdown
+	  
+   2. Exclude Specific IPs (like for static devices)
+      #Router(config)# ip dhcp excluded-address 192.168.1.1 192.168.1.10
+	  
+   3. Configure DHCP Pool
+      #Router(config)# ip dhcp pool LAN
+      #Router(dhcp-config)# network 192.168.1.0 255.255.255.0
+      #Router(dhcp-config)# default-router 192.168.1.1
+      #Router(dhcp-config)# dns-server 8.8.8.8 1.1.1.1
+      #Router(dhcp-config)# lease 7
+	  
+   4. Exit and Save
+      #Router(dhcp-config)# exit
+      #Router(config)# end
+      #Router# write memory
+	  
+   - Verify DHCP Configuration
+    - Check DHCP bindings (which IPs are leased)
+      #Router# show ip dhcp binding
+    
+	- Check DHCP pool details
+      #Router# show ip dhcp pool
